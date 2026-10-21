@@ -1,0 +1,573 @@
+/* Luxury Calendar Styling */
+
+:root {
+    /* Primary Colors */
+    --luxury-bg-warm: #FAFAF9;
+    --luxury-bg-white: #FFFFFF;
+    --luxury-text-primary: #1A1A1A;
+    --luxury-text-secondary: #6B7280;
+    
+    /* Accent Colors */
+    --luxury-accent-gold: #D4A574;
+    --luxury-accent-beige: #E8D5C4;
+    
+    /* Status Colors */
+    --luxury-status-available: #10B981;
+    --luxury-status-almost-full: #F59E0B;
+    --luxury-status-booked: #EF4444;
+    --luxury-status-waitlist: #8B5CF6;
+    
+    /* Borders & Dividers */
+    --luxury-border: #E5E7EB;
+    --luxury-border-light: #F3F4F6;
+}
+
+/* Typography */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--luxury-text-primary);
+    background-color: var(--luxury-bg-warm);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+/* Calendar Container */
+.luxury-calendar-container {
+    background: var(--luxury-bg-white);
+    border-radius: 16px;
+    border: 1px solid var(--luxury-border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 2rem;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Calendar Header */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--luxury-border);
+}
+
+.calendar-header h2 {
+    font-size: 1.875rem;
+    margin: 0;
+    color: var(--luxury-text-primary);
+}
+
+.calendar-nav {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.calendar-nav button {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid var(--luxury-border);
+    background: var(--luxury-bg-white);
+    color: var(--luxury-text-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.calendar-nav button:hover {
+    background: var(--luxury-accent-beige);
+    border-color: var(--luxury-accent-gold);
+    color: var(--luxury-accent-gold);
+}
+
+.calendar-nav button:active {
+    transform: scale(0.95);
+}
+
+/* Calendar Grid */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.calendar-weekday {
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--luxury-text-secondary);
+    padding: 0.75rem 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    border: 1px solid var(--luxury-border);
+    background: var(--luxury-bg-white);
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.calendar-day:hover:not(.disabled):not(.outside) {
+    border-color: var(--luxury-accent-gold);
+    background: var(--luxury-accent-beige);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212, 165, 116, 0.2);
+}
+
+.calendar-day.outside {
+    color: var(--luxury-border);
+    background: var(--luxury-bg-warm);
+    cursor: default;
+}
+
+.calendar-day.disabled {
+    color: var(--luxury-text-secondary);
+    background: var(--luxury-bg-warm);
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.calendar-day.start-date,
+.calendar-day.end-date {
+    background: var(--luxury-accent-gold);
+    color: var(--luxury-bg-white);
+    border-color: var(--luxury-accent-gold);
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(212, 165, 116, 0.3);
+}
+
+.calendar-day.in-range {
+    background: var(--luxury-accent-beige);
+    color: var(--luxury-text-primary);
+    border-color: var(--luxury-accent-gold);
+}
+
+.calendar-day.today {
+    border: 2px solid var(--luxury-accent-gold);
+}
+
+/* Availability Indicator */
+.availability-indicator {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.calendar-day.available .availability-indicator {
+    background: var(--luxury-status-available);
+}
+
+.calendar-day.almost-full .availability-indicator {
+    background: var(--luxury-status-almost-full);
+}
+
+.calendar-day.booked .availability-indicator {
+    background: var(--luxury-status-booked);
+}
+
+/* Time Slot Picker */
+.time-slots-container {
+    margin-bottom: 2rem;
+}
+
+.time-slots-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.time-slots-header h3 {
+    font-size: 1.25rem;
+    margin: 0;
+    color: var(--luxury-text-primary);
+}
+
+.time-slots-scroll {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    scroll-behavior: smooth;
+}
+
+.time-slots-scroll::-webkit-scrollbar {
+    height: 4px;
+}
+
+.time-slots-scroll::-webkit-scrollbar-track {
+    background: var(--luxury-bg-warm);
+    border-radius: 2px;
+}
+
+.time-slots-scroll::-webkit-scrollbar-thumb {
+    background: var(--luxury-accent-gold);
+    border-radius: 2px;
+}
+
+.time-slot {
+    flex-shrink: 0;
+    width: 120px;
+    padding: 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--luxury-border);
+    background: var(--luxury-bg-white);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.time-slot:hover:not(.unavailable) {
+    border-color: var(--luxury-accent-gold);
+    background: var(--luxury-accent-beige);
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(212, 165, 116, 0.2);
+}
+
+.time-slot.selected {
+    background: var(--luxury-accent-gold);
+    color: var(--luxury-bg-white);
+    border-color: var(--luxury-accent-gold);
+    box-shadow: 0 6px 16px rgba(212, 165, 116, 0.3);
+}
+
+.time-slot.unavailable {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--luxury-bg-warm);
+}
+
+.time-slot-time {
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.time-slot-availability {
+    font-size: 0.75rem;
+    color: var(--luxury-text-secondary);
+}
+
+.time-slot.selected .time-slot-availability {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.time-slot-price {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--luxury-accent-gold);
+}
+
+.time-slot.selected .time-slot-price {
+    color: var(--luxury-bg-white);
+}
+
+/* Facility Card */
+.facility-card {
+    background: var(--luxury-bg-white);
+    border-radius: 12px;
+    border: 1px solid var(--luxury-border);
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.facility-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+}
+
+.facility-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background: var(--luxury-bg-warm);
+}
+
+.facility-content {
+    padding: 1.5rem;
+}
+
+.facility-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1rem;
+}
+
+.facility-title {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--luxury-text-primary);
+}
+
+.facility-category {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: var(--luxury-accent-beige);
+    color: var(--luxury-accent-gold);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.facility-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--luxury-border);
+}
+
+.facility-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--luxury-text-secondary);
+}
+
+.facility-amenities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.amenity-badge {
+    padding: 0.35rem 0.75rem;
+    background: var(--luxury-bg-warm);
+    border-radius: 6px;
+    font-size: 0.8rem;
+    color: var(--luxury-text-secondary);
+}
+
+/* Booking Summary */
+.booking-summary {
+    background: var(--luxury-bg-warm);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid var(--luxury-border);
+}
+
+.booking-summary h3 {
+    font-size: 1.1rem;
+    margin: 0 0 1rem 0;
+    color: var(--luxury-text-primary);
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--luxury-border);
+    font-size: 0.95rem;
+}
+
+.summary-item:last-child {
+    border-bottom: none;
+    padding-top: 1rem;
+    padding-bottom: 0;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--luxury-text-primary);
+}
+
+.summary-label {
+    color: var(--luxury-text-secondary);
+}
+
+.summary-value {
+    color: var(--luxury-text-primary);
+    font-weight: 600;
+}
+
+.summary-item:last-child .summary-value {
+    color: var(--luxury-accent-gold);
+    font-size: 1.25rem;
+}
+
+/* Status Badges */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.status-badge.available {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--luxury-status-available);
+}
+
+.status-badge.almost-full {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--luxury-status-almost-full);
+}
+
+.status-badge.booked {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--luxury-status-booked);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+/* Buttons */
+.btn-luxury {
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    border: none;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-primary {
+    background: var(--luxury-accent-gold);
+    color: var(--luxury-bg-white);
+    box-shadow: 0 4px 12px rgba(212, 165, 116, 0.3);
+}
+
+.btn-primary:hover {
+    background: #C49560;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(212, 165, 116, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: var(--luxury-bg-white);
+    color: var(--luxury-text-primary);
+    border: 1px solid var(--luxury-border);
+}
+
+.btn-secondary:hover {
+    background: var(--luxury-bg-warm);
+    border-color: var(--luxury-accent-gold);
+}
+
+/* Loading State */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid var(--luxury-border);
+    border-top-color: var(--luxury-accent-gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .luxury-calendar-container {
+        padding: 1.5rem;
+    }
+    
+    .calendar-grid {
+        gap: 0.5rem;
+    }
+    
+    .time-slot {
+        width: 100px;
+        padding: 0.75rem;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .luxury-calendar-container {
+        padding: 1rem;
+    }
+    
+    .calendar-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+    
+    .calendar-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .calendar-grid {
+        gap: 0.4rem;
+    }
+    
+    .calendar-day {
+        font-size: 0.85rem;
+    }
+    
+    .time-slot {
+        width: 90px;
+        padding: 0.6rem;
+        font-size: 0.75rem;
+    }
+    
+    .btn-luxury {
+        width: 100%;
+    }
+}

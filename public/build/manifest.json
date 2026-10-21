@@ -1,0 +1,50 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-Ds2m5MXG.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/css/home-new.css": {
+    "file": "assets/home-new-JplB5Lhb.css",
+    "name": "home-new",
+    "names": [
+      "home-new.css"
+    ],
+    "src": "resources/css/home-new.css",
+    "isEntry": true
+  },
+  "resources/css/mobile.css": {
+    "file": "assets/mobile-BCgCYNNU.css",
+    "name": "mobile",
+    "names": [
+      "mobile.css"
+    ],
+    "src": "resources/css/mobile.css",
+    "isEntry": true
+  },
+  "resources/css/panel2.css": {
+    "file": "assets/panel2-_zoQglYx.css",
+    "name": "panel2",
+    "names": [
+      "panel2.css"
+    ],
+    "src": "resources/css/panel2.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-C9UhTOnX.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/home-new.js": {
+    "file": "assets/home-new-CBgnjyWE.js",
+    "name": "home-new",
+    "src": "resources/js/home-new.js",
+    "isEntry": true
+  }
+}

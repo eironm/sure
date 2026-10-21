@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CERTIFIED LIST OF FACILITY RESERVATIONS — SURE</title>
+    
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #e2e8f0;
+            color: #0f172a;
+            -webkit-font-smoothing: antialiased;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* ── Screen Toolbar (Hidden when printing) ── */
+        .print-toolbar {
+            position: sticky;
+            top: 0;
+            z-index: 9999;
+            background: #0f172a;
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+        }
+        .pt-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .pt-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.45rem 1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.15s ease;
+        }
+        .pt-btn-back {
+            background: #1e293b;
+            color: #f1f5f9;
+            border-color: #334155;
+        }
+        .pt-btn-back:hover {
+            background: #334155;
+            color: #ffffff;
+        }
+        .pt-btn-print {
+            background: #2563eb;
+            color: #ffffff;
+        }
+        .pt-btn-print:hover {
+            background: #1d4ed8;
+        }
+        .pt-mode-btn {
+            background: transparent;
+            color: #94a3b8;
+            border: 1px solid #334155;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .pt-mode-btn.active {
+            background: #38bdf8;
+            color: #0f172a;
+            border-color: #38bdf8;
+        }
+
+        /* ── Printable Paper Container ── */
+        .pdf-page-wrap {
+            padding: 24px 12px 60px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .pdf-sheet {
+            background: #ffffff;
+            width: 210mm;
+            min-height: 297mm;
+            padding: 16mm 18mm 18mm;
+            box-shadow: 0 12px 36px rgba(15, 23, 42, 0.15);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .pdf-sheet.landscape {
+            width: 297mm;
+            min-height: 210mm;
+        }
+
+        /* ── Official Letterhead (Attachments 1, 2, 3, 4) ── */
+        .doc-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .seal-wrap {
+            width: 68px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .seal-circle {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            border: 2px solid #0f2b48;
+            padding: 3px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+        }
+        .seal-inner-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 1px dashed #0f2b48;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8fafc;
+            color: #0f2b48;
+            font-size: 1.5rem;
+        }
+        .seal-label {
+            font-size: 8px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #64748b;
+            margin-top: 3px;
+        }
+
+        .doc-header-center {
+            text-align: center;
+            flex-grow: 1;
+        }
+        .doc-rep-ph {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: #334155;
+            margin-bottom: 2px;
+        }
+        .doc-inst-name {
+            font-size: 17px;
+            font-weight: 900;
+            color: #0f2b48;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+            margin-bottom: 2px;
+        }
+        .doc-dept-name {
+            font-size: 11px;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 6px;
+        }
+        
+        .doc-rule {
+            border-top: 2px solid #0f2b48;
+            border-bottom: 1px solid #0f2b48;
+            height: 4px;
+            margin: 4px 0 6px;
+        }
+
+        .doc-address-line {
+            font-size: 8.5px;
+            color: #475569;
+            line-height: 1.4;
+        }
+
+        /* ── Meta Block (Top-right below header) ── */
+        .doc-meta-block {
+            text-align: right;
+            font-size: 9px;
+            color: #475569;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            margin-top: 0.5rem;
+        }
+        .doc-meta-block strong {
+            color: #0f172a;
+        }
+
+        /* ── Report Title ── */
+        .doc-title {
+            text-align: center;
+            font-size: 14.5px;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: #0f172a;
+            margin: 0.5rem 0 1.15rem;
+        }
+        .doc-subtitle {
+            font-size: 10px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-top: -0.85rem;
+            margin-bottom: 1.15rem;
+            text-align: center;
+        }
+
+        /* ── Table Styling (Attachments 1, 2, 3) ── */
+        .doc-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9.5px;
+            margin-bottom: 0.75rem;
+        }
+        .doc-table thead th {
+            background-color: #0f2b48 !important;
+            color: #ffffff !important;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 8.5px;
+            letter-spacing: 0.05em;
+            padding: 6px 8px;
+            border: 1px solid #0f2b48;
+            text-align: left;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .doc-table tbody td {
+            padding: 5.5px 8px;
+            border: 1px solid #d1d5db;
+            color: #1e293b;
+            vertical-align: middle;
+        }
+        .doc-table tbody tr:nth-child(even) {
+            background-color: #f8fafc;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* Group Headers (Attachments 2, 3) */
+        .group-bar-header {
+            background-color: #dbeafe !important;
+            color: #1e40af !important;
+            font-weight: 800;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 5px 8px;
+            border: 1px solid #bfdbfe;
+            margin-top: 0.75rem;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .group-bar-subtotal {
+            text-align: right;
+            font-size: 9px;
+            font-weight: 800;
+            color: #0f172a;
+            padding: 4px 8px 10px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .grand-total-row {
+            text-align: right;
+            font-size: 10px;
+            font-weight: 900;
+            color: #0f172a;
+            margin-top: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ── Analytics Dashboard View (Attachment 4) ── */
+        .analytics-kpi-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+        .analytics-kpi-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 8px 12px;
+            position: relative;
+            overflow: hidden;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .analytics-kpi-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: 4px;
+        }
+        .analytics-kpi-card.green::before { background: #10b981; }
+        .analytics-kpi-card.blue::before { background: #3b82f6; }
+        .analytics-kpi-card.amber::before { background: #f59e0b; }
+        .analytics-kpi-card.red::before { background: #ef4444; }
+
+        .ak-label {
+            font-size: 8px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: capitalize;
+            margin-bottom: 2px;
+        }
+        .ak-val {
+            font-size: 18px;
+            font-weight: 900;
+            color: #0f172a;
+            line-height: 1.1;
+        }
+
+        /* Charts section */
+        .analytics-charts-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 1.5rem;
+        }
+        .chart-box {
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 12px 14px;
+        }
+        .chart-title {
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #334155;
+            margin-bottom: 10px;
+        }
+
+        /* INSIGHT Box (Attachment 4) */
+        .doc-insight-box {
+            border: 1px solid #10b981;
+            background: #f0fdf4 !important;
+            border-radius: 4px;
+            padding: 10px 14px;
+            font-size: 8.5px;
+            line-height: 1.5;
+            color: #166534;
+            margin-bottom: 1.75rem;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .doc-insight-box strong.title {
+            display: block;
+            font-size: 8px;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 3px;
+        }
+
+        /* ── Signature Section (All Attachments) ── */
+        .signature-section {
+            margin-top: 1.5rem;
+            margin-bottom: 1.75rem;
+            font-size: 9px;
+        }
+        .sig-label {
+            color: #334155;
+            margin-bottom: 36px;
+        }
+        .sig-line {
+            width: 220px;
+            border-bottom: 1px solid #0f172a;
+            margin-bottom: 3px;
+        }
+        .sig-name {
+            font-weight: 800;
+            font-size: 10px;
+            color: #0f172a;
+        }
+        .sig-title {
+            font-size: 8.5px;
+            color: #64748b;
+        }
+        .sig-subtext {
+            font-size: 7.5px;
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        /* ── Official Footer (All Attachments) ── */
+        .doc-footer {
+            border-top: 1px solid #cbd5e1;
+            padding-top: 8px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            font-size: 8px;
+            color: #64748b;
+            margin-top: auto;
+        }
+        .footer-left {
+            line-height: 1.4;
+        }
+        .footer-left strong {
+            color: #1e293b;
+            font-size: 8.5px;
+        }
+        .footer-right {
+            text-align: right;
+            line-height: 1.4;
+        }
+
+        /* ── Print Media Optimization ── */
+        @media print {
+            .print-toolbar {
+                display: none !important;
+            }
+            body {
+                background: #ffffff !important;
+            }
+            .pdf-page-wrap {
+                padding: 0 !important;
+                display: block !important;
+            }
+            .pdf-sheet {
+                width: 100% !important;
+                min-height: auto !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            @page {
+                size: A4 portrait;
+                margin: 10mm 12mm 12mm 12mm;
+            }
+            .page-break {
+                page-break-after: always;
+            }
+        }
+    </style>
+</head>
+<body>
+
+
+<div class="print-toolbar">
+    <div class="pt-title">
+        <i class="bi bi-file-earmark-pdf-fill text-danger fs-5"></i>
+        <span>Official Printable Document Preview &bull; CERTIFIED LIST OF FACILITY RESERVATIONS</span>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+        <button type="button" class="pt-mode-btn " onclick="switchLayout('table')">
+            Flat Table (Att. 1)
+        </button>
+        <button type="button" class="pt-mode-btn " onclick="switchLayout('grouped')">
+            Grouped List (Att. 2 &amp; 3)
+        </button>
+        <button type="button" class="pt-mode-btn active" onclick="switchLayout('analytics')">
+            Analytics Dashboard (Att. 4)
+        </button>
+
+        <a href="http://localhost/admin/reports?view_type=analytics" class="pt-btn pt-btn-back">
+            <i class="bi bi-arrow-left"></i> Back to Reports
+        </a>
+        <button type="button" class="pt-btn pt-btn-print" onclick="window.print()">
+            <i class="bi bi-printer-fill"></i> Print / Save as PDF
+        </button>
+    </div>
+</div>
+
+
+<div class="pdf-page-wrap">
+    <div class="pdf-sheet" id="printSheet">
+
+        <div>
+            
+            <div class="doc-header">
+                
+                <div class="seal-wrap">
+                    <div class="seal-circle">
+                        <div class="seal-inner-circle">
+                            <i class="bi bi-bank"></i>
+                        </div>
+                    </div>
+                    <div class="seal-label">SAMPLE</div>
+                </div>
+
+                
+                <div class="doc-header-center">
+                    <div class="doc-rep-ph">Republic of the Philippines</div>
+                    <div class="doc-inst-name">SURE</div>
+                    <div class="doc-dept-name">Office of Campus Facilities &amp; Venue Operations</div>
+                    <div class="doc-rule"></div>
+                    <div class="doc-address-line">
+                        University Boulevard, Main Campus, Metro Manila, 1100, Philippines<br>
+                        Tel: (02) 8911-2000 | Email: facilities-office@university.edu.ph
+                    </div>
+                </div>
+
+                
+                <div class="seal-wrap">
+                    <div class="seal-circle">
+                        <div class="seal-inner-circle">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                    </div>
+                    <div class="seal-label">OFFICIAL</div>
+                </div>
+            </div>
+
+            
+            <div class="doc-meta-block">
+                <div>Date Range: <strong>All Records</strong></div>
+                <div>Grouped By: <strong>All Records</strong></div>
+                <div>Generated On: <strong>September 08, 2026 at 3:59 PM</strong></div>
+            </div>
+
+            
+            <h2 class="doc-title">CERTIFIED LIST OF FACILITY RESERVATIONS</h2>
+
+            
+            
+            
+                            <div class="doc-subtitle">Summary report &bull; All Records</div>
+
+                
+                <div class="analytics-kpi-row">
+                    <div class="analytics-kpi-card green">
+                        <div class="ak-label">Total Reservations</div>
+                        <div class="ak-val">29</div>
+                    </div>
+                    <div class="analytics-kpi-card blue">
+                        <div class="ak-label">Approved &amp; Confirmed</div>
+                        <div class="ak-val">14</div>
+                    </div>
+                    <div class="analytics-kpi-card amber">
+                        <div class="ak-label">Paid Revenue</div>
+                        <div class="ak-val" style="font-size: 14px;">₱84,000.00</div>
+                    </div>
+                    <div class="analytics-kpi-card red">
+                        <div class="ak-label">Pending Collection</div>
+                        <div class="ak-val" style="font-size: 14px;">₱41,300.00</div>
+                    </div>
+                </div>
+
+                
+                <div class="analytics-charts-row">
+                    
+                    <div class="chart-box">
+                        <div class="chart-title">Monthly Activity (2026)</div>
+                        <div style="height: 120px; display: flex; align-items: flex-end; gap: 4px; padding-top: 10px; border-bottom: 1.5px solid #cbd5e1;">
+                                                                                                                        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%;">
+                                    <span style="font-size: 7px; font-weight: 700; color: #1e40af;"></span>
+                                    <div style="width: 14px; height: 3%; background: #2563eb; border-radius: 2px 2px 0 0;"></div>
+                                    <span style="font-size: 7px; font-weight: 600; color: #64748b; margin-top: 3px;">Jan</span>
+                                </div>
+                                                                                            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%;">
+                                    <span style="font-size: 7px; font-weight: 700; color: #1e40af;">1</span>
+                                    <div style="width: 14px; height: 13%; background: #2563eb; border-radius: 2px 2px 0 0;"></div>
+                                    <span style="font-size: 7px; font-weight: 600; color: #64748b; margin-top: 3px;">Feb</span>
+                                </div>
+                                                                                            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%;">
+                                    <span style="font-size: 7px; font-weight: 700; color: #1e40af;">2</span>
+                                    <div style="width: 14px; height: 25%; background: #2563eb; border-radius: 2px 2px 0 0;"></div>
+                                    <span style="font-size: 7px; font-weight: 600; color: #64748b; margin-top: 3px;">Mar</span>
+                                </div>
+                                                                                            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%;">
+                                    <span style="font-size: 7px; font-weight: 700; color: #1e40af;">2</span>
+                                    <div style="width: 14px; height: 25%; background: #2563eb; border-radius: 2px 2px 0 0;"></div>
+                                    <span style="font-size: 7px; font-weight: 600; color: #64748b; margin-top: 3px;">Apr</span>
+                                </div>
+                                                                                            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%;">
+                                    <span style="font-size: 7px; font-weight: 700; color: #1e40af;">2</span>
+                                    <div style="width: 14px; height: 25%; background: #2563eb; border-radius: 2px 2px 0 0;"></div>
+                                    <span style="font-size: 7px; font-weight: 600; color: #64748b; margin-top: 3px;">May</span>
+                                </div>
+                                                                                            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%;">
+                                    <span style="font-size: 7px; font-weight: 700; color: #1e40af;">2</span>
+                                    <div style="width: 14px; height: 25%; background: #2563eb; border-radius: 2px 2px 0 0;"></div>
+                                    <span style="font-size: 7px; font-weight: 600; color: #64748b; margin-top: 3px;">Jun</span>
+                                </div>
+                                                                                            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%;">
+                                    <span style="font-size: 7px; font-weight: 700; color: #1e40af;">3</span>
+                                    <div style="width: 14px; height: 38%; background: #2563eb; border-radius: 2px 2px 0 0;"></div>
+                                    <span style="font-size: 7px; font-weight: 600; color: #64748b; margin-top: 3px;">Jul</span>
+                                </div>
+                                                                                            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%;">
+                                    <span style="font-size: 7px; font-weight: 700; color: #1e40af;">8</span>
+                                    <div style="width: 14px; height: 100%; background: #2563eb; border-radius: 2px 2px 0 0;"></div>
+                                    <span style="font-size: 7px; font-weight: 600; color: #64748b; margin-top: 3px;">Aug</span>
+                                </div>
+                                                                                            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%;">
+                                    <span style="font-size: 7px; font-weight: 700; color: #1e40af;">8</span>
+                                    <div style="width: 14px; height: 100%; background: #2563eb; border-radius: 2px 2px 0 0;"></div>
+                                    <span style="font-size: 7px; font-weight: 600; color: #64748b; margin-top: 3px;">Sep</span>
+                                </div>
+                                                                                            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%;">
+                                    <span style="font-size: 7px; font-weight: 700; color: #1e40af;"></span>
+                                    <div style="width: 14px; height: 3%; background: #2563eb; border-radius: 2px 2px 0 0;"></div>
+                                    <span style="font-size: 7px; font-weight: 600; color: #64748b; margin-top: 3px;">Oct</span>
+                                </div>
+                                                                                            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%;">
+                                    <span style="font-size: 7px; font-weight: 700; color: #1e40af;"></span>
+                                    <div style="width: 14px; height: 3%; background: #2563eb; border-radius: 2px 2px 0 0;"></div>
+                                    <span style="font-size: 7px; font-weight: 600; color: #64748b; margin-top: 3px;">Nov</span>
+                                </div>
+                                                                                            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%;">
+                                    <span style="font-size: 7px; font-weight: 700; color: #1e40af;"></span>
+                                    <div style="width: 14px; height: 3%; background: #2563eb; border-radius: 2px 2px 0 0;"></div>
+                                    <span style="font-size: 7px; font-weight: 600; color: #64748b; margin-top: 3px;">Dec</span>
+                                </div>
+                                                    </div>
+                    </div>
+
+                    
+                    <div class="chart-box">
+                        <div class="chart-title">Payment Settlement Breakdown</div>
+                        <div style="display: flex; flex-direction: column; gap: 6px; padding-top: 5px;">
+                                                                                            <div>
+                                    <div style="display: flex; justify-content: space-between; font-size: 8px; font-weight: 700; margin-bottom: 2px;">
+                                        <span style="display: flex; align-items: center; gap: 4px;">
+                                            <span style="width: 7px; height: 7px; border-radius: 50%; background: #10b981; display: inline-block;"></span>
+                                            Paid
+                                        </span>
+                                        <span>12 (41%)</span>
+                                    </div>
+                                    <div style="width: 100%; height: 5px; background: #f1f5f9; border-radius: 4px; overflow: hidden;">
+                                        <div style="width: 41%; height: 100%; background: #10b981;"></div>
+                                    </div>
+                                </div>
+                                                                                            <div>
+                                    <div style="display: flex; justify-content: space-between; font-size: 8px; font-weight: 700; margin-bottom: 2px;">
+                                        <span style="display: flex; align-items: center; gap: 4px;">
+                                            <span style="width: 7px; height: 7px; border-radius: 50%; background: #f59e0b; display: inline-block;"></span>
+                                            Cash Pending
+                                        </span>
+                                        <span>8 (28%)</span>
+                                    </div>
+                                    <div style="width: 100%; height: 5px; background: #f1f5f9; border-radius: 4px; overflow: hidden;">
+                                        <div style="width: 28%; height: 100%; background: #f59e0b;"></div>
+                                    </div>
+                                </div>
+                                                                                            <div>
+                                    <div style="display: flex; justify-content: space-between; font-size: 8px; font-weight: 700; margin-bottom: 2px;">
+                                        <span style="display: flex; align-items: center; gap: 4px;">
+                                            <span style="width: 7px; height: 7px; border-radius: 50%; background: #f97316; display: inline-block;"></span>
+                                            Partial Paid
+                                        </span>
+                                        <span>0 (0%)</span>
+                                    </div>
+                                    <div style="width: 100%; height: 5px; background: #f1f5f9; border-radius: 4px; overflow: hidden;">
+                                        <div style="width: 0%; height: 100%; background: #f97316;"></div>
+                                    </div>
+                                </div>
+                                                                                            <div>
+                                    <div style="display: flex; justify-content: space-between; font-size: 8px; font-weight: 700; margin-bottom: 2px;">
+                                        <span style="display: flex; align-items: center; gap: 4px;">
+                                            <span style="width: 7px; height: 7px; border-radius: 50%; background: #64748b; display: inline-block;"></span>
+                                            Unpaid/Pending
+                                        </span>
+                                        <span>6 (21%)</span>
+                                    </div>
+                                    <div style="width: 100%; height: 5px; background: #f1f5f9; border-radius: 4px; overflow: hidden;">
+                                        <div style="width: 21%; height: 100%; background: #64748b;"></div>
+                                    </div>
+                                </div>
+                                                    </div>
+                    </div>
+                </div>
+
+                
+                <div class="doc-insight-box">
+                    <strong class="title"><i class="bi bi-lightbulb-fill"></i> INSIGHT</strong>
+                    During the period (All Records), a total of 29 reservations were processed across university venues. <strong>Multi-Purpose Gymnasium</strong> emerged as the most requested facility with 13 bookings (45% of total demand). Activity peaked in August with 8 bookings. Financial settlement stands at <strong>67%</strong> collected (₱84,000.00), with ₱41,300.00 pending cashier settlement or deadline enforcement.
+                </div>
+            
+            
+            <div class="signature-section">
+                <div class="sig-label">Prepared by:</div>
+                <div class="sig-line"></div>
+                <div class="sig-name">Admin User</div>
+                <div class="sig-title">Facility Operations &amp; Administration</div>
+                <div class="sig-subtext">Signature over printed name</div>
+            </div>
+        </div>
+
+        
+        <div class="doc-footer">
+            <div class="footer-left">
+                <strong>SURE</strong><br>
+                University Boulevard, Main Campus, Metro Manila<br>
+                Contact: (02) 8911-2000 | Email: facilities-office@university.edu.ph
+            </div>
+            <div class="footer-right">
+                Date Printed: September 08, 2026 &nbsp; Time Printed: 3:59 PM<br>
+                Page 1 of 1<br>
+                Generated by: SURE Facility Management System (Official Report)
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function switchLayout(mode) {
+        var url = new URL(window.location.href);
+        url.searchParams.set('view_type', mode);
+        window.location.href = url.toString();
+    }
+</script>
+
+</body>
+</html>

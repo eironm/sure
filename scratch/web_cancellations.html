@@ -1,0 +1,3074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Reports &amp; Analytics - SURE</title>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="csrf-token" content="hSYBJ9hv5YIewrg1PhtwfS0jF9h0tVRgXWYXLj4f">
+<meta name="theme-color" content="#000000">
+<link rel="icon" type="image/png" href="http://localhost/uploads/branding/EXDhHSCptmh85dBAE8zs.png">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800,900&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+<link rel="preload" as="style" href="http://localhost/build/assets/panel2-BkzaChTu.css" /><link rel="preload" as="style" href="http://localhost/build/assets/app-DHoXNILA.css" /><link rel="preload" as="style" href="http://localhost/build/assets/mobile-BCgCYNNU.css" /><link rel="stylesheet" href="http://localhost/build/assets/panel2-BkzaChTu.css" /><link rel="stylesheet" href="http://localhost/build/assets/app-DHoXNILA.css" /><link rel="stylesheet" href="http://localhost/build/assets/mobile-BCgCYNNU.css" /><script>
+// Cache-busting guarantee: re-link every local panel stylesheet with a fresh
+// fingerprint query string so a stale browser cache can never serve the old
+// CSS (which broke the flex column layout and hid the live preview).
+(function () {
+  try {
+    var ts = Date.now();
+    var styles = document.querySelectorAll('link[rel="stylesheet"][href]');
+    styles.forEach(function (link) {
+      var href = link.getAttribute('href') || '';
+      if (link.dataset.__cbc === '1') return; // already repointed this lifetime
+      if (href.indexOf('/build/assets/') === -1) return; // skip CDNs/fonts
+      var clean = href.split('?')[0];
+      link.setAttribute('href', clean + '?v=' + ts);
+      link.dataset.__cbc = '1';
+    });
+  } catch (e) {}
+})();
+</script>
+<script>
+    // Run panel page initializers on full loads and PJAX-compatible swaps.
+    window.onPageLoad = window.onPageLoad || function (cb) {
+        if (typeof cb !== 'function') return;
+        const run = () => {
+            try { cb(); } catch (error) { console.error('Panel initializer failed', error); }
+        };
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', run, { once: true });
+        } else {
+            setTimeout(run, 0);
+        }
+    };
+</script>
+<style>
+    [x-cloak] { display: none !important; }
+
+    :root {
+        
+            --brand-primary: #ff6c0a;
+            --brand-secondary: #483569;
+            --brand-accent: #94bdff;
+            --brand-dark: #000000;
+            --brand-primary-rgb: 255,108,10;
+            --brand-secondary-rgb: 72,53,105;
+            --brand-accent-rgb: 148,189,255;
+            --brand-dark-rgb: 0,0,0;
+        
+        --sidebar-width: 264px;
+        --sidebar-bg: var(--brand-dark, #0f172a);
+        --sidebar-line: rgba(255, 255, 255, 0.06);
+        --accent: var(--brand-primary, #7c3aed);
+        --accent-rgb: var(--brand-primary-rgb, 124, 58, 237);
+        --surface: #f6f7fb;
+        --ink: var(--brand-dark, #0f172a);
+        --ink-2: #475569;
+        --ink-3: #94a3b8;
+        --line: #e7eaf0;
+        /* Soften Bootstrap corner radii globally */
+        --bs-border-radius: .65rem;
+        --bs-border-radius-sm: .5rem;
+        --bs-border-radius-lg: .85rem;
+        --bs-border-radius-xl: 1rem;
+        --bs-body-color: var(--ink-2);
+    }
+
+    body {
+        font-family: 'Figtree', sans-serif;
+        background: var(--surface);
+        color: var(--ink-2);
+        min-height: 100vh;
+        margin: 0;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Sidebar ─────────────────────────────────────────── */
+    .sidebar {
+        width: var(--sidebar-width);
+        background: var(--sidebar-bg, var(--brand-dark, #0f172a));
+        height: 100vh;
+        position: fixed;
+        left: 0; top: 0;
+        display: flex;
+        flex-direction: column;
+        z-index: 1000;
+        border-right: 1px solid rgba(255, 255, 255, 0.04);
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255,255,255,.12) transparent;
+    }
+    .sidebar::-webkit-scrollbar { width: 6px; }
+    .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 99px; }
+
+    .sidebar-header {
+        padding: 1.4rem 1.25rem 1.1rem;
+        display: flex;
+        flex-direction: column;
+        gap: .65rem;
+        border-bottom: 1px solid var(--sidebar-line);
+    }
+    .brand-wrapper { display: flex; align-items: center; gap: .7rem; }
+    .brand-logo-img { width: 34px; height: 34px; object-fit: contain; border-radius: 8px; flex-shrink: 0; }
+    /* Wordmark-only mode: with the name text hidden, let a wide wordmark
+       breathe instead of squeezing it into the 34px icon box. */
+    .brand-logo-img.brand-wordmark-only { width: auto; height: 38px; border-radius: 6px; max-width: calc(100% - 2.5rem); }
+    .brand-name { color: #fff; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 1.05rem; letter-spacing: .5px; }
+
+    .current-panel-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .4rem;
+        color: rgba(255, 255, 255, .72);
+        font-size: .62rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+    }
+    .current-panel-badge i { color: var(--accent); }
+
+    /* ── Navigation ──────────────────────────────────────── */
+    .sidebar nav { flex: 1; padding: 1rem .85rem; }
+    .nav-section {
+        font-size: .6rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.4px;
+        color: rgba(255, 255, 255, .58);
+        padding: 1.1rem .65rem .45rem;
+        user-select: none;
+    }
+    .sidebar nav .nav-section:first-child { padding-top: .15rem; }
+    .sidebar .nav-link {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: .7rem;
+        padding: .62rem .8rem;
+        color: rgba(255, 255, 255, .84);
+        text-decoration: none;
+        font-size: .9rem;
+        font-weight: 500;
+        border-radius: 10px;
+        transition: color .15s, background-color .15s;
+        margin-bottom: 2px;
+    }
+    .sidebar .nav-link:hover { color: #e2e8f0; background: rgba(255, 255, 255, 0.08); }
+    .sidebar .nav-link.active {
+        color: #fff;
+        background: var(--accent, var(--brand-primary, #7c3aed));
+        font-weight: 600;
+        box-shadow: none;
+    }
+    .sidebar .nav-link.active::before {
+        content: '';
+        position: absolute;
+        left: -0.85rem;
+        top: 22%;
+        height: 56%;
+        width: 3px;
+        border-radius: 99px;
+        background: var(--accent);
+    }
+    .sidebar .nav-link i { font-size: 1.02rem; width: 22px; text-align: center; opacity: .9; }
+
+    /* ── Sidebar Footer ──────────────────────────────────── */
+    /* Native checkbox is only the state source; the track is the visual switch. */
+    .acct-switch input[type="checkbox"] {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+    }
+    .sidebar-footer { padding: 1rem; border-top: 1px solid var(--sidebar-line); }
+    .user-info { display: flex; align-items: center; gap: .7rem; margin-bottom: .9rem; }
+    .avatar {
+        width: 38px; height: 38px;
+        background: linear-gradient(135deg, var(--accent), rgba(var(--accent-rgb), .65));
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; font-weight: 700; font-size: .85rem; flex-shrink: 0;
+    }
+    /* ── Unified user avatar (component: x-user-avatar) ──
+       Uses --uav-hue set inline per-user for a deterministic tile color.
+       The subtle person watermark keeps the "default avatar" feel when
+       no photo is uploaded; uploaded photos cover it entirely. */
+    .uavatar {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border-radius: 10px;
+        background: hsl(var(--uav-hue, 220) 55% 52%);
+        color: #fff;
+        font-weight: 700;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
+    }
+    .uavatar-img { width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 2; }
+    .uavatar-initials { position: relative; z-index: 2; font-size: inherit; line-height: 1; letter-spacing: .3px; }
+    .uavatar-watermark {
+        position: absolute; inset: 0; z-index: 1;
+        display: flex; align-items: center; justify-content: center;
+        font-size: .9em; color: rgba(255, 255, 255, .32);
+    }
+    .uavatar.xs { width: 26px; height: 26px; font-size: .6rem; border-radius: 7px; }
+    .uavatar.sm { width: 38px; height: 38px; font-size: .85rem; }
+    .uavatar.md { width: 46px; height: 46px; font-size: 1rem; }
+    .uavatar.lg { width: 64px; height: 64px; font-size: 1.4rem; }
+
+    .user-details { overflow: hidden; line-height: 1.25; }
+    .user-name { color: #fff; font-size: .87rem; font-weight: 600; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; display: block; }
+    .user-role { color: rgba(255, 255, 255, .56); font-size: .68rem; text-transform: uppercase; letter-spacing: .8px; }
+
+    .panel-switcher {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+        gap: .45rem;
+        margin-bottom: .55rem;
+    }
+    .switch-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: .25rem;
+        padding: .55rem .25rem;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        color: var(--ink-3);
+        font-size: .62rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        text-decoration: none;
+        transition: all .15s;
+    }
+    .switch-btn i { font-size: .95rem; }
+    .switch-btn:hover { background: rgba(var(--accent-rgb), .2); border-color: rgba(var(--accent-rgb), .35); color: #fff; }
+
+    .btn-logout {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: .5rem;
+        width: 100%;
+        padding: .55rem;
+        border-radius: 10px;
+        font-size: .82rem;
+        font-weight: 600;
+        background: transparent;
+        color: #f87171;
+        border: 1px solid rgba(248, 113, 113, 0.25);
+        transition: all .15s;
+    }
+    .btn-logout:hover { background: #ef4444; border-color: #ef4444; color: #fff; }
+
+    /* ── Main Content & Top Bar ──────────────────────────── */
+    .main-content { margin-left: var(--sidebar-width); min-height: 100vh; padding: 0 2rem 3rem; }
+    .top-bar {
+        position: sticky;
+        top: 0;
+        z-index: 900;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: .75rem;
+        margin: 0 -2rem 1.5rem;
+        padding: .8rem 2rem;
+        background: rgba(255, 255, 255, .82);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--line);
+    }
+    .header-title {
+        font-weight: 800;
+        color: var(--ink);
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+        letter-spacing: -.02em;
+        position: relative;
+        padding-bottom: .6rem;
+    }
+    .header-title::after {
+        content: '';
+        position: absolute;
+        left: 0; bottom: 0;
+        width: 44px; height: 3px;
+        border-radius: 99px;
+        background: linear-gradient(90deg, var(--accent), rgba(var(--accent-rgb), .35));
+    }
+
+    /* PJAX page transition */
+    #pjax-content { animation: pjaxFadeUp .28s ease; }
+    @keyframes pjaxFadeUp {
+        from { opacity: 0; transform: translateY(8px); }
+        to   { opacity: 1; transform: none; }
+    }
+
+    /* ── Cards ───────────────────────────────────────────── */
+    .main-content .card {
+        border: 1px solid var(--line);
+        border-radius: .9rem;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+        transition: box-shadow .2s, transform .2s;
+    }
+    .main-content .card:hover { box-shadow: 0 6px 18px rgba(15, 23, 42, .07); }
+    .main-content .card .card-header { background: #fff; border-bottom: 1px solid #f1f5f9; }
+    .main-content .shadow-sm { box-shadow: 0 1px 3px rgba(15, 23, 42, .06), 0 1px 2px rgba(15, 23, 42, .04) !important; }
+
+    /* ── Tables ──────────────────────────────────────────── */
+    .main-content .table { --bs-table-hover-bg: #f8fafc; margin-bottom: 0; }
+    .main-content .table thead th {
+        font-size: .7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .07em;
+        color: var(--ink-3);
+        background: #fafbfd;
+        border-bottom: 1px solid var(--line);
+        padding: .7rem 1rem;
+        white-space: nowrap;
+    }
+    .main-content .table tbody td { padding: .85rem 1rem; vertical-align: middle; border-color: #f1f5f9; }
+    .main-content .table tbody tr:last-child td { border-bottom: 0; }
+    .main-content .table tbody tr:hover { background: #f8fafc; }
+
+    /* ── Buttons ─────────────────────────────────────────── */
+    .main-content .btn { font-weight: 600; }
+    .btn-sure {
+        background: var(--accent);
+        border: 1px solid var(--accent);
+        color: #fff;
+    }
+    .btn-sure:hover, .btn-sure:focus { background: rgba(var(--accent-rgb), .88); border-color: rgba(var(--accent-rgb), .88); color: #fff; }
+    .btn-sure:disabled { background: rgba(var(--accent-rgb), .45); border-color: transparent; color: #fff; }
+
+    /* ── Badges ──────────────────────────────────────────── */
+    .main-content .badge { font-weight: 600; letter-spacing: .02em; }
+
+    /* ── Forms ───────────────────────────────────────────── */
+    .main-content .form-control, .main-content .form-select {
+        border-color: var(--line);
+    }
+    .main-content .form-control:focus, .main-content .form-select:focus {
+        border-color: rgba(var(--accent-rgb), .5);
+        box-shadow: 0 0 0 .2rem rgba(var(--accent-rgb), .1);
+    }
+    .main-content .input-group-text { background: #fafbfd; border-color: var(--line); color: var(--ink-3); }
+    .main-content .form-switch .form-check-input {
+        width: 2.75em;
+        height: 1.5em;
+        margin-top: 0;
+        cursor: pointer;
+        border: 0;
+        border-radius: 2em;
+        background-color: #cbd5e1;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: left 0.15rem center;
+        background-size: 1.15rem 1.15rem;
+        box-shadow: none;
+        transition: background-position 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+    }
+    .main-content .form-switch .form-check-input:checked {
+        background-color: var(--accent);
+        background-position: right 0.15rem center;
+    }
+    .main-content .form-switch .form-check-input:focus {
+        box-shadow: 0 0 0 0.2rem rgba(var(--accent-rgb), 0.12);
+    }
+    .main-content .form-check-input:checked { background-color: var(--accent); border-color: var(--accent); }
+    .main-content .form-check-input:focus { border-color: rgba(var(--accent-rgb), .5); box-shadow: 0 0 0 .2rem rgba(var(--accent-rgb), .1); }
+    .main-content label.form-label { color: var(--ink-2); }
+
+    /* ── Pagination ──────────────────────────────────────── */
+    .main-content .pagination { gap: .25rem; }
+    .main-content .page-link {
+        border: 0;
+        border-radius: .55rem;
+        color: var(--ink-2);
+        font-weight: 600;
+        font-size: .85rem;
+        min-width: 2.1rem;
+        text-align: center;
+    }
+    .main-content .page-link:hover { background: #eef0f6; color: var(--ink); }
+    .main-content .page-item.active .page-link { background: var(--accent); color: #fff; }
+    .main-content .page-item.disabled .page-link { background: transparent; color: #cbd5e1; }
+    .main-content .page-link:focus { box-shadow: 0 0 0 .2rem rgba(var(--accent-rgb), .15); }
+
+    /* ── Alerts ──────────────────────────────────────────── */
+    .main-content .alert { border: 0; border-radius: .85rem; font-weight: 500; }
+    .main-content .alert-success { background: #ecfdf5; color: #047857; }
+    .main-content .alert-danger { background: #fef2f2; color: #b91c1c; }
+    .main-content .alert-info { background: #eff6ff; color: #1d4ed8; }
+    .main-content .alert-warning { background: #fffbeb; color: #b45309; }
+
+    /* ── Modals / Offcanvas ──────────────────────────────── */
+    .modal-content { border: 0; border-radius: 1rem; box-shadow: 0 24px 64px rgba(15, 23, 42, .18); }
+    .modal-header { border-bottom: 1px solid #f1f5f9; }
+    .modal-footer { border-top: 1px solid #f1f5f9; }
+    .offcanvas { border: 0; }
+
+    /* ══ Panel Component Library ══════════════════════════ */
+
+    /* Page head: title + action buttons on one row */
+    .page-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+    }
+    .page-head .header-title { margin-bottom: 0; }
+
+    /* KPI stat cards */
+    .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.75rem;
+    }
+    .stat-card {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: .9rem;
+        padding: 1.15rem 1.3rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+        transition: box-shadow .2s, transform .2s;
+    }
+    .stat-card:hover { box-shadow: 0 8px 20px rgba(15, 23, 42, .08); transform: translateY(-2px); }
+    .stat-card .stat-icon {
+        width: 2.8rem; height: 2.8rem;
+        border-radius: .75rem;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+        background: rgba(var(--accent-rgb), .1);
+        color: var(--accent);
+    }
+    .stat-card .stat-icon.success { background: #ecfdf5; color: #059669; }
+    .stat-card .stat-icon.warning { background: #fffbeb; color: #d97706; }
+    .stat-card .stat-icon.danger  { background: #fef2f2; color: #dc2626; }
+    .stat-card .stat-icon.info    { background: #eff6ff; color: #2563eb; }
+    .stat-card .stat-value { font-size: 1.45rem; font-weight: 800; color: var(--ink); line-height: 1.15; }
+    .stat-card .stat-label { font-size: .72rem; font-weight: 700; color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; }
+
+    /* Status chips (reservations, payments, users) */
+    .status-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        padding: .28rem .7rem;
+        border-radius: 99px;
+        font-size: .72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+    }
+    .status-chip::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .status-chip.approved, .status-chip.paid, .status-chip.active   { background: #ecfdf5; color: #047857; }
+    .status-chip.pending, .status-chip.partial                       { background: #fffbeb; color: #b45309; }
+    .status-chip.denied, .status-chip.cancelled, .status-chip.failed { background: #fef2f2; color: #b91c1c; }
+    .status-chip.completed, .status-chip.neutral                     { background: #eef2ff; color: #4338ca; }
+
+    /* Empty states */
+    .panel-empty {
+        text-align: center;
+        padding: 3.5rem 1.5rem;
+        color: var(--ink-3);
+    }
+    .panel-empty i { font-size: 2.6rem; display: block; margin-bottom: .75rem; color: #cbd5e1; }
+    .panel-empty h4 { font-size: 1rem; font-weight: 700; color: var(--ink-2); margin-bottom: .3rem; }
+    .panel-empty p { font-size: .875rem; margin: 0; }
+
+    /* Toolbar row above tables: search + filters */
+    .table-toolbar {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+        flex-wrap: wrap;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid #f1f5f9;
+        background: #fff;
+        border-radius: .9rem .9rem 0 0;
+    }
+    .table-toolbar .form-control, .table-toolbar .form-select { max-width: 240px; }
+
+    /* ── Panel drawer trigger ────────────────────────────── */
+    /* Hidden on desktop, where the sidebar is permanently visible. */
+    .panel-hamburger { display: none; }
+
+    /* Groups the clock and bell so the hamburger can sit opposite them. */
+    .top-bar-actions {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+        margin-left: auto;
+    }
+
+    .panel-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(2, 6, 23, .55);
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .25s ease, visibility .25s ease;
+    }
+    .panel-backdrop.is-open { opacity: 1; visibility: visible; }
+
+    /* ── Responsive ──────────────────────────────────────── */
+    @media (max-width: 1024px) {
+        /* The sidebar was translated off-screen here with nothing able
+           to bring it back, so admin, staff, superadmin and cashier had
+           no navigation at all on a phone. It is now a real drawer. */
+        .sidebar {
+            transform: translateX(-100%);
+            transition: transform .3s cubic-bezier(.32, .72, 0, 1),
+                        visibility 0s linear .3s,
+                        box-shadow 0s linear .3s;
+            /* Off-screen but still painting its right border and any
+               shadow down the screen edge; hide it outright. */
+            visibility: hidden;
+            box-shadow: none;
+            width: min(84vw, var(--sidebar-width));
+            /* Clear the notch and the home indicator. */
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+            overscroll-behavior: contain;
+        }
+        .sidebar.is-open {
+            transform: translateX(0);
+            visibility: visible;
+            box-shadow: 8px 0 32px rgba(0, 0, 0, .3);
+            transition: transform .3s cubic-bezier(.32, .72, 0, 1),
+                        visibility 0s linear 0s,
+                        box-shadow 0s linear 0s;
+        }
+
+        .main-content { margin-left: 0; padding: 1.25rem 1rem 2.5rem; }
+
+        /* The bar now carries the drawer trigger on the left, so it can
+           no longer be a flex-end row. */
+        .top-bar {
+            justify-content: space-between;
+            margin: 0 -1rem 1.25rem;
+            padding: .6rem 1rem;
+            padding-left: max(1rem, env(safe-area-inset-left, 0px));
+            padding-right: max(1rem, env(safe-area-inset-right, 0px));
+        }
+
+        .panel-hamburger {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            flex-shrink: 0;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: #fff;
+            color: var(--ink);
+            font-size: 1.4rem;
+            line-height: 1;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .panel-hamburger:active { background: #f1f5f9; }
+
+        /* Close control, only meaningful while the drawer is a drawer.
+           The header is a column flex container, so this is pinned
+           rather than added to the flow. */
+        .sidebar-header { position: relative; padding-right: 3.6rem; }
+        .sidebar-close {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 1rem;
+            right: .9rem;
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, .08);
+            color: #fff;
+            font-size: 1.1rem;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .sidebar-close:active { background: rgba(255, 255, 255, .18); }
+
+        /* Comfortable targets for the nav rows. */
+        .sidebar .nav-link { padding-top: .8rem; padding-bottom: .8rem; }
+
+        .header-title { font-size: 1.25rem; }
+    }
+
+    /* The close button has no purpose while the sidebar is pinned. */
+    @media (min-width: 1025px) {
+        .sidebar-close { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        * { transition: none !important; }
+    }
+</style>
+</head>
+<body>
+    <div class="sidebar" id="panelSidebar" data-drawer role="navigation" aria-label="Panel navigation">
+        <div class="sidebar-header">
+            
+            <button type="button" class="sidebar-close" data-drawer-close aria-label="Close navigation menu">
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
+            </button>
+            <div class="brand-wrapper">
+                <img src="http://localhost/uploads/branding/MHZ9OskDWI18KtPY7oaG.png" data-logo-light="http://localhost/uploads/branding/MHZ9OskDWI18KtPY7oaG.png" data-logo-dark="http://localhost/uploads/branding/84eMgb2TaQuvhLcCmfmj.png" alt="Logo" class="brand-logo-img brand-logo-auto brand-wordmark-only">
+                <span class="brand-name d-none">SURE</span>
+            </div>
+            <div class="current-panel-badge">
+                <i class="bi bi-circle-fill" style="font-size: 0.35rem;"></i>
+                Admin Panel
+            </div>
+        </div>
+
+        <nav id="pjax-sidenav" data-pjax-swap>
+            <div class="nav-section">Overview</div>
+            <a href="http://localhost/admin/dashboard" class="nav-link ">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+            <a href="http://localhost/admin/reservations" class="nav-link ">
+                <i class="bi bi-calendar-event"></i> Reservations
+            </a>
+            <a href="http://localhost/admin/reports" class="nav-link active">
+                <i class="bi bi-file-earmark-bar-graph"></i> Reports
+            </a>
+
+            <div class="nav-section">Management</div>
+                        <a href="http://localhost/admin/users" class="nav-link ">
+                <i class="bi bi-people"></i> User Management
+            </a>
+                        <a href="http://localhost/admin/facilities" class="nav-link ">
+                <i class="bi bi-building"></i> Facilities
+            </a>
+
+            <div class="nav-section">System</div>
+            <a href="http://localhost/admin/settings/categories" class="nav-link ">
+                <i class="bi bi-gear"></i> Settings
+            </a>
+                        <a href="http://localhost/admin/audit-logs" class="nav-link ">
+                <i class="bi bi-journal-text"></i> Audit Logs
+            </a>
+                    </nav>
+
+        <div class="sidebar-footer">
+    <div class="user-info">
+        <span
+    class="uavatar sm"
+    style="--uav-hue: 331;"
+    title="Admin User"
+>
+            <span class="uavatar-initials" aria-hidden="true">AU</span>
+        <i class="bi bi-person-fill uavatar-watermark" aria-hidden="true"></i>
+    </span>
+        <div class="user-details">
+            <span class="user-name">Admin User</span>
+            <span class="user-role">Admin</span>
+        </div>
+    </div>
+
+            <div class="panel-switcher">
+                                        <a href="http://localhost/admin/dashboard"
+                   class="switch-btn d-none"
+                   title="Admin Panel">
+                    <i class="bi bi-grid-3x3-gap"></i> Admin
+                </a>
+                                        <a href="http://localhost/cashier/dashboard"
+                   class="switch-btn "
+                   title="Cashier Panel">
+                    <i class="bi bi-cash-coin"></i> Cashier
+                </a>
+                                        <a href="http://localhost/guest/dashboard"
+                   class="switch-btn "
+                   title="Guest Panel">
+                    <i class="bi bi-person-badge"></i> Guest
+                </a>
+                    </div>
+    
+    <form method="POST" action="http://localhost/logout">
+        <input type="hidden" name="_token" value="hSYBJ9hv5YIewrg1PhtwfS0jF9h0tVRgXWYXLj4f" autocomplete="off">        <button type="submit" class="btn-logout">
+            <i class="bi bi-box-arrow-right"></i> Logout
+        </button>
+    </form>
+</div>
+    </div>
+
+    <div class="main-content">
+        <div class="top-bar">
+            
+            <button type="button" class="panel-hamburger" data-drawer-toggle="#panelSidebar"
+                    aria-controls="panelSidebar" aria-expanded="false" aria-label="Open navigation menu">
+                <i class="bi bi-list" aria-hidden="true"></i>
+            </button>
+            <div class="top-bar-actions">
+                <div class="d-none d-md-flex flex-column align-items-end me-3" style="line-height: 1.2;">
+    <span id="global-rt-date" class="fw-bold fs-6 text-primary" style="font-family: 'JetBrains Mono', monospace;">
+        Tuesday, Sep 8
+    </span>
+    <span id="global-rt-time" class="text-muted fw-bold" style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">
+        2026 04:15:02 PM
+    </span>
+</div>
+
+<script>
+    if (!window.RealTimeClockStarted) {
+        window.RealTimeClockStarted = true;
+        onPageLoad(function() {
+            function updateGlobalClock() {
+                const now = new Date();
+                const hour = now.getHours();
+
+                const dateEl = document.getElementById('global-rt-date');
+                if (dateEl) {
+                    dateEl.innerText = now.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+                }
+
+                const timeEl = document.getElementById('global-rt-time');
+                if (timeEl) {
+                    let h = hour % 12 || 12;
+                    const m = now.getMinutes().toString().padStart(2, '0');
+                    const s = now.getSeconds().toString().padStart(2, '0');
+                    const a = hour >= 12 ? 'PM' : 'AM';
+                    timeEl.innerText = `${now.getFullYear()} ${h.toString().padStart(2,'0')}:${m}:${s} ${a}`;
+                }
+            }
+            updateGlobalClock();
+            setInterval(updateGlobalClock, 1000);
+        });
+    }
+</script>
+                <div
+    x-data="notificationBell()"
+    x-init="init()"
+    class="position-relative d-flex align-items-center"
+    id="notification-bell-wrapper"
+>
+    
+    <button
+        @click="toggleDropdown()"
+        type="button"
+        id="notification-bell-btn"
+        aria-label="Notifications"
+        class="btn border-0 p-2 position-relative d-flex align-items-center justify-content-center notification-bell-btn"
+        style="line-height: 1; transition: all 0.3s ease;"
+    >
+        <i class="bi bi-bell-fill"></i>
+
+        
+        <span
+            x-show="unreadCount > 0"
+            x-text="unreadCount > 99 ? '99+' : unreadCount"
+            x-cloak
+            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger shadow-sm"
+            style="font-size: 0.65rem; min-width: 20px; height: 20px; padding: 4px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--surface-card, #fff);"
+        ></span>
+    </button>
+
+    <style>
+        .notification-bell-btn {
+            background: rgba(var(--brand-primary-rgb, 37, 99, 235), 0.1);
+            color: var(--brand-primary, #2563eb);
+            border: 1px solid rgba(var(--brand-primary-rgb, 37, 99, 235), 0.2) !important;
+            border-radius: 10px;
+            width: 40px;
+            height: 40px;
+            font-size: 1.25rem;
+        }
+        .notification-bell-btn:hover {
+            background: rgba(var(--brand-primary-rgb, 37, 99, 235), 0.25);
+            color: var(--brand-primary, #2563eb);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(var(--brand-primary-rgb, 37, 99, 235), 0.2);
+        }
+
+        /* ── Mobile ──────────────────────────────────────────
+           The panel is anchored to the bell with a hard 340px
+           width. On a 360px screen that overflows the viewport
+           and clips the right-hand side, including the unread
+           dots. Below 480px it detaches from the bell and spans
+           the screen with a fixed margin instead.              */
+           It stays anchored under the bell (switching to position:fixed
+           would detach it and land differently in each layout); only the
+           width is constrained. Growing leftward from right:0 cannot
+           introduce horizontal scroll, since that edge is already inside
+           the viewport. */
+        @media (max-width: 479.98px) {
+            .notification-dropdown {
+                width: calc(100vw - 1.5rem) !important;
+                max-width: calc(100vw - 1.5rem) !important;
+            }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            .notification-bell-btn:hover {
+                transform: none;
+                box-shadow: none;
+            }
+        }
+    </style>
+
+    
+    <div
+        x-show="open"
+        x-cloak
+        @click.away="open = false"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-100"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="position-absolute bg-white rounded-3 shadow notification-dropdown"
+        style="
+            top: calc(100% + 10px);
+            right: 0;
+            width: 340px;
+            z-index: 1060;
+            border: 1px solid rgba(0,0,0,0.1);
+            overflow: hidden;
+        "
+    >
+        
+        <div class="d-flex align-items-center justify-content-between px-3 py-2" style="border-bottom:1px solid rgba(0,0,0,0.08);">
+            <span class="fw-bold text-dark d-flex align-items-center gap-2" style="font-size:0.9rem;">
+                <i class="bi bi-bell-fill text-warning"></i>
+                Notifications
+                <span x-show="unreadCount > 0" x-cloak class="badge bg-danger rounded-pill" style="font-size:0.6rem;" x-text="unreadCount"></span>
+            </span>
+            <button
+                x-show="unreadCount > 0"
+                x-cloak
+                @click.stop="markAllAsRead()"
+                type="button"
+                class="btn btn-link btn-sm p-0 text-decoration-none fw-semibold"
+                style="font-size:0.75rem;"
+            >Mark all read</button>
+        </div>
+
+        
+        <div style="max-height:360px; overflow-y:auto;">
+
+            
+            <div x-show="notifications.length === 0" x-cloak class="text-center py-5 text-muted">
+                <i class="bi bi-bell-slash d-block mb-2 opacity-25" style="font-size:2.5rem;"></i>
+                <p class="small mb-0">No notifications yet</p>
+            </div>
+
+            
+            <template x-for="notif in notifications" :key="notif.id">
+                <div
+                    class="border-bottom"
+                    :style="!notif.read_at ? 'background:#f0f8ff;' : ''"
+                >
+                    <div
+                        @click="markAsRead(notif.id)"
+                        class="d-flex align-items-start gap-3 px-3 py-3"
+                        style="color:inherit; transition:background 0.15s; cursor:pointer;"
+                        onmouseover="this.style.background='#f8f9fa'"
+                        onmouseout="this.style.background=''"
+                    >
+                        
+                        <div class="flex-shrink-0 mt-1">
+                            <div
+                                class="rounded-circle d-flex align-items-center justify-content-center"
+                                :class="{
+                                    'bg-success-subtle text-success': notif.data.status === 'approved',
+                                    'bg-danger-subtle text-danger':   notif.data.status === 'denied',
+                                    'bg-primary-subtle text-primary': notif.data.status === 'submitted',
+                                    'bg-secondary-subtle text-secondary': notif.data.status === 'cancelled',
+                                    'bg-warning-subtle text-warning': !['approved','denied','submitted','cancelled'].includes(notif.data.status)
+                                }"
+                                style="width:32px;height:32px;font-size:0.85rem;"
+                            >
+                                <i
+                                    :class="{
+                                        'bi bi-check-circle-fill': notif.data.status === 'approved',
+                                        'bi bi-x-circle-fill':     notif.data.status === 'denied',
+                                        'bi bi-info-circle-fill':  notif.data.status === 'submitted',
+                                        'bi bi-dash-circle-fill':  notif.data.status === 'cancelled',
+                                        'bi bi-bell-fill':         !['approved','denied','submitted','cancelled'].includes(notif.data.status)
+                                    }"
+                                ></i>
+                            </div>
+                        </div>
+
+                        
+                        <div class="flex-grow-1 min-w-0">
+                            <p
+                                class="mb-1 fw-semibold lh-sm"
+                                :class="!notif.read_at ? 'text-dark' : 'text-muted'"
+                                style="font-size:0.82rem;"
+                                x-text="getNotifMessage(notif)"
+                            ></p>
+                            
+                            <template x-if="notif.data.status === 'denied' && getDenialReason(notif)">
+                                <p class="mb-1 fst-italic" style="font-size:0.75rem; color:#dc3545; line-height:1.3;">
+                                    <i class="bi bi-quote me-1"></i>
+                                    <span x-text="getDenialReason(notif)"></span>
+                                </p>
+                            </template>
+                            <p class="mb-0 text-muted" style="font-size:0.7rem;" x-text="timeAgo(notif.created_at)"></p>
+                        </div>
+
+                        
+                        <div x-show="!notif.read_at" class="flex-shrink-0 mt-2">
+                            <span class="rounded-circle bg-primary d-inline-block" style="width:8px;height:8px;"></span>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        
+        <div class="text-center py-2 px-3" style="border-top:1px solid rgba(0,0,0,0.08);">
+            <span class="text-muted" style="font-size:0.7rem;" x-text="notifications.length ? 'Showing ' + notifications.length + ' notification' + (notifications.length !== 1 ? 's' : '') : ''"></span>
+        </div>
+    </div>
+</div>
+
+<script>
+function notificationBell() {
+    return {
+        open: false,
+        notifications: [],
+        unreadCount: 0,
+        _pollTimer: null,
+
+        init() {
+            this.fetchNotifications();
+
+            // Polling fallback every 30s (works even without Reverb)
+            this._pollTimer = setInterval(() => this.fetchNotifications(), 30000);
+
+            // Real-time via Laravel Echo + Reverb
+            // On broadcast, do a full re-fetch from server to avoid duplicates
+            const self = this;
+            if (window.Echo) {
+                window.Echo.private('App.Models.User.3')
+                    .notification(function(notification) {
+                        // Show native browser notification
+                        if (window.Notification && Notification.permission === 'granted') {
+                            new Notification('SURE — Reservation Update', {
+                                body: notification.message || 'Your reservation status has changed.',
+                                icon: 'http://localhost/uploads/branding/PInh0245kv9HYKa3BlIO.png'
+                            });
+                        }
+                        // Re-fetch the full list from server (avoids duplicates)
+                        self.fetchNotifications();
+                    });
+            }
+
+            // Request browser notification permission
+            if (window.Notification && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        },
+
+        // Toggle dropdown and refresh data when opening
+        toggleDropdown() {
+            this.open = !this.open;
+            if (this.open) {
+                this.fetchNotifications();
+            }
+        },
+
+        async fetchNotifications() {
+            try {
+                const res = await fetch('http://localhost/notifications', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                });
+                if (!res.ok) return;
+                const data = await res.json();
+                this.notifications = data.notifications;
+                this.unreadCount   = data.unread_count;
+            } catch (e) {
+                console.warn('[NotificationBell] fetch error:', e);
+            }
+        },
+
+        async markAsRead(id) {
+            try {
+                await fetch('/notifications/' + id + '/mark-as-read', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                });
+                // Update locally without re-fetching
+                const notif = this.notifications.find(n => n.id === id);
+                if (notif && !notif.read_at) {
+                    notif.read_at = new Date().toISOString();
+                    this.unreadCount = Math.max(0, this.unreadCount - 1);
+                }
+            } catch (e) {
+                console.warn('[NotificationBell] markAsRead error:', e);
+            }
+        },
+
+        async markAllAsRead() {
+            try {
+                await fetch('http://localhost/notifications/mark-as-read', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                });
+                this.notifications.forEach(n => n.read_at = n.read_at || new Date().toISOString());
+                this.unreadCount = 0;
+            } catch (e) {
+                console.warn('[NotificationBell] markAllAsRead error:', e);
+            }
+        },
+
+
+
+        // Extract the main message without the denial reason suffix
+        getNotifMessage(notif) {
+            const msg = notif.data.message || '';
+            if (notif.data.status === 'denied' && msg.includes(' Reason: ')) {
+                return msg.split(' Reason: ')[0] + '.';
+            }
+            return msg;
+        },
+
+        // Extract just the denial reason from the message
+        getDenialReason(notif) {
+            const msg = notif.data.message || '';
+            if (notif.data.status === 'denied' && msg.includes(' Reason: ')) {
+                return msg.split(' Reason: ').slice(1).join(' Reason: ');
+            }
+            return '';
+        },
+
+        timeAgo(dateString) {
+            const diff = Math.floor((Date.now() - new Date(dateString)) / 1000);
+            if (diff < 60)    return 'Just now';
+            if (diff < 3600)  return Math.floor(diff / 60)   + 'm ago';
+            if (diff < 86400) return Math.floor(diff / 3600)  + 'h ago';
+            if (diff < 604800)return Math.floor(diff / 86400) + 'd ago';
+            return new Date(dateString).toLocaleDateString();
+        }
+    };
+}
+</script>
+            </div>
+        </div>
+
+        
+        <div class="panel-backdrop" data-drawer-backdrop="#panelSidebar" aria-hidden="true"></div>
+
+        <div id="pjax-content" data-pjax-swap>
+            
+            
+            
+            <style>
+    /* ── Admin Reports Engine ── */
+    .rep-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.25rem;
+    }
+    .rep-title {
+        font-size: 2rem;
+        font-weight: 900;
+        letter-spacing: -0.03em;
+        color: #0f172a;
+        margin: 0;
+    }
+    .rep-subtitle {
+        color: #64748b;
+        font-size: 0.925rem;
+        margin-top: 0.25rem;
+    }
+
+    /* Quick Presets Bar */
+    .rep-presets-wrap {
+        margin-bottom: 1.25rem;
+    }
+    .rep-presets-label {
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #64748b;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+    .rep-presets-bar {
+        display: flex;
+        gap: 0.5rem;
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+    .rep-preset-btn {
+        padding: 0.45rem 0.9rem;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #334155;
+        text-decoration: none;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        transition: all 0.15s ease;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+    }
+    .rep-preset-btn:hover {
+        border-color: #2563eb;
+        color: #1d4ed8;
+        background: #f8fafc;
+        transform: translateY(-1px);
+    }
+    .rep-preset-btn.active {
+        background: #0f2b48;
+        color: #ffffff;
+        border-color: #0f2b48;
+        box-shadow: 0 2px 8px rgba(15, 43, 72, 0.25);
+    }
+
+    /* Tabs */
+    .rep-tabs {
+        display: flex;
+        gap: 0.4rem;
+        background: #e2e8f0;
+        padding: 0.35rem;
+        border-radius: 12px;
+        overflow-x: auto;
+        margin-bottom: 1.5rem;
+    }
+    .rep-tab {
+        padding: 0.55rem 1rem;
+        font-size: 0.825rem;
+        font-weight: 700;
+        border-radius: 9px;
+        text-decoration: none;
+        color: #475569;
+        white-space: nowrap;
+        transition: all 0.15s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+    }
+    .rep-tab:hover {
+        color: #0f172a;
+        background: rgba(255, 255, 255, 0.6);
+    }
+    .rep-tab.active {
+        background: #ffffff;
+        color: #0f172a;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+    }
+
+    /* Filter Card */
+    .rep-filter-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 1.25rem 1.5rem;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
+        margin-bottom: 1.75rem;
+    }
+    .rep-filter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 0.9rem;
+        align-items: end;
+    }
+    .rep-field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+    }
+    .rep-label {
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #64748b;
+    }
+    .rep-input, .rep-select {
+        height: 38px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 0 0.75rem;
+        font-size: 0.85rem;
+        color: #0f172a;
+        background: #ffffff;
+        transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .rep-input:focus, .rep-select:focus {
+        border-color: #2563eb;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    /* Signatory Drawer */
+    .signatory-settings-wrap {
+        border-top: 1px dashed #e2e8f0;
+        margin-top: 1rem;
+        padding-top: 0.85rem;
+    }
+    .sig-toggle-btn {
+        background: transparent;
+        border: none;
+        color: #475569;
+        font-size: 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0;
+    }
+    .sig-toggle-btn:hover {
+        color: #0f172a;
+    }
+
+    /* Stat Cards */
+    .rep-kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.75rem;
+    }
+    .rep-kpi-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 1.15rem 1.25rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+    }
+    .rep-kpi-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 4px;
+    }
+    .rep-kpi-card.green::before { background: #10b981; }
+    .rep-kpi-card.blue::before { background: #3b82f6; }
+    .rep-kpi-card.amber::before { background: #f59e0b; }
+    .rep-kpi-card.red::before { background: #ef4444; }
+    .rep-kpi-card.purple::before { background: #8b5cf6; }
+
+    .rep-kpi-label {
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #64748b;
+        margin-bottom: 0.35rem;
+    }
+    .rep-kpi-val {
+        font-size: 1.65rem;
+        font-weight: 900;
+        color: #0f172a;
+        letter-spacing: -0.02em;
+        margin: 0;
+    }
+    .rep-kpi-sub {
+        font-size: 0.78rem;
+        color: #94a3b8;
+        margin-top: 0.25rem;
+    }
+
+    /* Action Buttons */
+    .btn-rep {
+        height: 38px;
+        padding: 0 1.15rem;
+        border-radius: 9px;
+        font-size: 0.825rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.15s ease;
+        border: 1px solid transparent;
+        white-space: nowrap;
+    }
+    .btn-rep-primary {
+        background: #2563eb;
+        color: #ffffff;
+        box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+    }
+    .btn-rep-primary:hover {
+        background: #1d4ed8;
+        color: #ffffff;
+    }
+    .btn-rep-print {
+        background: #0f172a;
+        color: #ffffff;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.25);
+    }
+    .btn-rep-print:hover {
+        background: #1e293b;
+        color: #ffffff;
+    }
+    .btn-rep-outline {
+        background: #ffffff;
+        border-color: #cbd5e1;
+        color: #334155;
+    }
+    .btn-rep-outline:hover {
+        background: #f8fafc;
+        border-color: #94a3b8;
+        color: #0f172a;
+    }
+
+    /* Content Card */
+    .rep-sheet-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+        margin-bottom: 2.5rem;
+    }
+
+    /* Modern Table */
+    .rep-table-wrap {
+        overflow-x: auto;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+    }
+    .rep-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+        text-align: left;
+    }
+    .rep-table thead th {
+        background: #0f2b48;
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 0.85rem 1rem;
+        border: none;
+        white-space: nowrap;
+    }
+    .rep-table tbody tr {
+        border-bottom: 1px solid #f1f5f9;
+        transition: background 0.12s;
+    }
+    .rep-table tbody tr:nth-child(even) {
+        background: #f8fafc;
+    }
+    .rep-table tbody tr:hover {
+        background: #f1f5f9;
+    }
+    .rep-table td {
+        padding: 0.85rem 1rem;
+        color: #334155;
+        vertical-align: middle;
+    }
+
+    /* Group Banner */
+    .rep-group-header {
+        background: #e0e7ff;
+        color: #1e3a8a;
+        font-weight: 800;
+        font-size: 0.85rem;
+        padding: 0.75rem 1rem;
+        border-top: 2px solid #c7d2fe;
+        border-bottom: 1px solid #c7d2fe;
+    }
+    .rep-group-footer {
+        background: #f8fafc;
+        font-weight: 800;
+        color: #0f172a;
+        padding: 0.65rem 1rem;
+        font-size: 0.825rem;
+        border-bottom: 2px solid #e2e8f0;
+        text-align: right;
+    }
+
+    /* Badges */
+    .badge-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.2rem 0.6rem;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+    .badge-paid { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+    .badge-cash-pending { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+    .badge-pending { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+    .badge-cancelled { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+    .badge-partial { background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
+
+    .badge-item-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        background: #f1f5f9;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        padding: 0.2rem 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-right: 0.3rem;
+        margin-bottom: 0.3rem;
+    }
+    .badge-item-pill .qty {
+        background: #2563eb;
+        color: #ffffff;
+        border-radius: 4px;
+        padding: 0.1rem 0.35rem;
+        font-size: 0.7rem;
+    }
+
+    /* Insight Box (matching Attachment 4) */
+    .rep-insight-box {
+        background: #f0fdf4;
+        border: 1px solid #86efac;
+        border-radius: 12px;
+        padding: 1.15rem 1.4rem;
+        color: #14532d;
+        font-size: 0.925rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+    .rep-insight-title {
+        font-size: 0.78rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #15803d;
+        margin-bottom: 0.4rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    /* Chart SVG Containers */
+    .chart-container {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+</style>
+
+
+<div class="rep-header">
+    <div>
+        <h1 class="rep-title">Reports &amp; Analytics Engine</h1>
+        <p class="rep-subtitle">Official certified reports, financial ledgers, logistics dispatch checklists, and executive analytics.</p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+        <a href="http://localhost/admin/reports/export-csv?report_type=cancellations" class="btn-rep btn-rep-outline">
+            <i class="bi bi-file-earmark-spreadsheet"></i> Export CSV
+        </a>
+        <a href="http://localhost/admin/reports/print?report_type=cancellations" target="_blank" class="btn-rep btn-rep-print">
+            <i class="bi bi-printer-fill"></i> Print / Save as PDF
+        </a>
+    </div>
+</div>
+
+
+<div class="rep-presets-wrap">
+    <div class="rep-presets-label">
+        <i class="bi bi-lightning-charge-fill text-warning"></i> Quick-Report Shortcuts:
+    </div>
+    <div class="rep-presets-bar">
+        <a href="http://localhost/admin/reports?report_type=reservations&amp;date_preset=today&amp;status=approved"
+           class="rep-preset-btn ">
+            <i class="bi bi-calendar-check text-success"></i> Today's Schedule &amp; Setup
+        </a>
+        <a href="http://localhost/admin/reports?report_type=reservations&amp;payment_status=cash_pending&amp;urgency=expiring_soon"
+           class="rep-preset-btn ">
+            <i class="bi bi-exclamation-triangle text-danger"></i> Unsettled Cash Due Soon
+        </a>
+        <a href="http://localhost/admin/reports?report_type=income&amp;date_preset=this_month&amp;group_by=facility"
+           class="rep-preset-btn ">
+            <i class="bi bi-cash-stack text-success"></i> Monthly Remittance Ledger
+        </a>
+        <a href="http://localhost/admin/reports?report_type=facilities&amp;date_preset=this_month"
+           class="rep-preset-btn ">
+            <i class="bi bi-trophy text-warning"></i> Facility Leaderboard
+        </a>
+        <a href="http://localhost/admin/reports?report_type=dispatch&amp;date_preset=this_month&amp;has_logistics=1"
+           class="rep-preset-btn ">
+            <i class="bi bi-truck text-primary"></i> Logistics Dispatch Sheet
+        </a>
+        <a href="http://localhost/admin/reports?report_type=cancellations&amp;date_preset=this_year"
+           class="rep-preset-btn active">
+            <i class="bi bi-shield-x text-danger"></i> Cancellations &amp; Forfeitures
+        </a>
+        <a href="http://localhost/admin/reports?report_type=analytics&amp;date_preset=this_year"
+           class="rep-preset-btn ">
+            <i class="bi bi-pie-chart-fill text-info"></i> Executive Analytics
+        </a>
+    </div>
+</div>
+
+
+<div class="rep-tabs">
+    <a href="http://localhost/admin/reports?report_type=reservations"
+       class="rep-tab ">
+        <i class="bi bi-card-checklist"></i> Master List
+    </a>
+    <a href="http://localhost/admin/reports?report_type=income"
+       class="rep-tab ">
+        <i class="bi bi-cash-stack"></i> Revenue &amp; Income
+    </a>
+    <a href="http://localhost/admin/reports?report_type=facilities"
+       class="rep-tab ">
+        <i class="bi bi-building"></i> Facility Utilization
+    </a>
+    <a href="http://localhost/admin/reports?report_type=clients"
+       class="rep-tab ">
+        <i class="bi bi-people"></i> Client Breakdown
+    </a>
+    <a href="http://localhost/admin/reports?report_type=dispatch"
+       class="rep-tab ">
+        <i class="bi bi-truck"></i> Logistics Dispatch
+    </a>
+    <a href="http://localhost/admin/reports?report_type=cancellations"
+       class="rep-tab active">
+        <i class="bi bi-x-octagon"></i> Cancellations Audit
+    </a>
+    <a href="http://localhost/admin/reports?report_type=analytics"
+       class="rep-tab ">
+        <i class="bi bi-pie-chart-fill"></i> Executive Analytics
+    </a>
+</div>
+
+
+<div class="rep-filter-card">
+    <form method="GET" action="http://localhost/admin/reports" id="reportFilterForm">
+        <input type="hidden" name="report_type" value="cancellations">
+
+        <div class="rep-filter-grid">
+            
+            <div class="rep-field">
+                <label class="rep-label"><i class="bi bi-calendar3"></i> Period Preset</label>
+                <select name="date_preset" class="rep-select" onchange="toggleCustomDates(this.value)">
+                    <option value="all" selected>All Records</option>
+                    <option value="today" >Today</option>
+                    <option value="this_week" >This Week</option>
+                    <option value="this_month" >This Month</option>
+                    <option value="last_month" >Last Month</option>
+                    <option value="this_quarter" >This Quarter</option>
+                    <option value="this_year" >Annual (This Year)</option>
+                    <option value="custom" >Custom Date Range...</option>
+                </select>
+            </div>
+
+            
+            <div class="rep-field custom-date-wrap d-none" id="fromWrap">
+                <label class="rep-label">From Date</label>
+                <input type="date" name="date_from" value="" class="rep-input">
+            </div>
+
+            
+            <div class="rep-field custom-date-wrap d-none" id="toWrap">
+                <label class="rep-label">To Date</label>
+                <input type="date" name="date_to" value="" class="rep-input">
+            </div>
+
+            
+            <div class="rep-field">
+                <label class="rep-label"><i class="bi bi-building"></i> Facility</label>
+                <select name="facility_id" class="rep-select">
+                    <option value="all">All Facilities</option>
+                                            <option value="7" >
+                            Innovation Hub – Conference Room A
+                        </option>
+                                            <option value="6" >
+                            Multi-Purpose Gymnasium
+                        </option>
+                                            <option value="8" >
+                            Open-Air Amphitheatre
+                        </option>
+                                            <option value="10" >
+                            Rooftop Events Deck
+                        </option>
+                                            <option value="9" >
+                            Science &amp; Research Laboratory 1
+                        </option>
+                                            <option value="5" >
+                            University Main Auditorium
+                        </option>
+                                    </select>
+            </div>
+
+            
+            <div class="rep-field">
+                <label class="rep-label"><i class="bi bi-tags"></i> Category</label>
+                <select name="category_id" class="rep-select">
+                    <option value="all">All Categories</option>
+                                            <option value="2" >
+                            Auditorium
+                        </option>
+                                            <option value="1" >
+                            Axiom
+                        </option>
+                                            <option value="6" >
+                            Laboratory
+                        </option>
+                                            <option value="4" >
+                            Meeting Rooms
+                        </option>
+                                            <option value="5" >
+                            Outdoor
+                        </option>
+                                            <option value="3" >
+                            Sports
+                        </option>
+                                    </select>
+            </div>
+
+            
+            <div class="rep-field">
+                <label class="rep-label"><i class="bi bi-credit-card"></i> Payment Status</label>
+                <select name="payment_status" class="rep-select">
+                    <option value="all">All Payment States</option>
+                    <option value="paid" >Paid</option>
+                    <option value="cash_pending" >Cash Pending (OTC)</option>
+                    <option value="partially_paid" >Partially Paid (Deposit)</option>
+                    <option value="unpaid" >Unpaid / Pending</option>
+                </select>
+            </div>
+
+            
+            <div class="rep-field">
+                <label class="rep-label"><i class="bi bi-flag"></i> Booking Status</label>
+                <select name="status" class="rep-select">
+                    <option value="all">All Booking Statuses</option>
+                    <option value="approved" >Approved</option>
+                    <option value="pending" >Pending Review</option>
+                    <option value="cancelled" >Cancelled</option>
+                    <option value="cancelled_all" selected>Cancelled (All Types)</option>
+                    <option value="denied" >Denied</option>
+                </select>
+            </div>
+
+            
+            <div class="rep-field">
+                <label class="rep-label"><i class="bi bi-hourglass-split"></i> Payment Urgency</label>
+                <select name="urgency" class="rep-select">
+                    <option value="all">All Timelines</option>
+                    <option value="expiring_soon" >⚠️ Expiring Soon (Next 48h)</option>
+                    <option value="overdue" >🚨 Past Deadline (Overdue)</option>
+                    <option value="deposit_paid" >🛡️ Security Deposit Paid</option>
+                </select>
+            </div>
+
+            
+            <div class="rep-field">
+                <label class="rep-label"><i class="bi bi-clock-history"></i> Shift &amp; Schedule</label>
+                <select name="time_shift" class="rep-select">
+                    <option value="all">All Hours &amp; Days</option>
+                    <option value="day" >☀️ Daytime Events (Standard)</option>
+                    <option value="night_overnight" >🌙 Night &amp; Overnight Events</option>
+                    <option value="weekday" >📅 Weekdays (Mon - Fri)</option>
+                    <option value="weekend" >🎉 Weekends (Sat - Sun)</option>
+                </select>
+            </div>
+
+            
+            <div class="rep-field">
+                <label class="rep-label"><i class="bi bi-box-seam"></i> Logistics / Equipment</label>
+                <select name="has_logistics" class="rep-select">
+                    <option value="all" selected>All Bookings</option>
+                    <option value="1" >Has Equipment Requested</option>
+                    <option value="0" >No Equipment Requested</option>
+                </select>
+            </div>
+
+            
+            <div class="rep-field">
+                <label class="rep-label"><i class="bi bi-person-badge"></i> Client Affiliation</label>
+                <select name="client_type" class="rep-select">
+                    <option value="all">All Clients</option>
+                    <option value="internal" >Internal (University)</option>
+                    <option value="external" >External Clients</option>
+                </select>
+            </div>
+
+            
+            <div class="rep-field">
+                <label class="rep-label"><i class="bi bi-layers"></i> Group By</label>
+                <select name="group_by" class="rep-select">
+                    <option value="none" selected>None (Flat Chronological)</option>
+                    <option value="facility" >Facility (Venue)</option>
+                    <option value="payment_status" >Payment Status (Paid vs Unpaid)</option>
+                    <option value="month" >Month (Jan, Feb, Mar...)</option>
+                    <option value="client" >Client (User)</option>
+                </select>
+            </div>
+
+            
+            <div class="rep-field">
+                <label class="rep-label"><i class="bi bi-search"></i> Keyword Search</label>
+                <input type="text" name="search" value="" placeholder="Ref, title, client..." class="rep-input">
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn-rep btn-rep-primary flex-grow-1">
+                    <i class="bi bi-funnel-fill"></i> Filter
+                </button>
+                <a href="http://localhost/admin/reports?report_type=cancellations" class="btn-rep btn-rep-outline" title="Reset Filters">
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                </a>
+            </div>
+        </div>
+
+        
+        <div class="signatory-settings-wrap">
+            <button type="button" class="sig-toggle-btn" onclick="toggleSignatoryInputs()">
+                <i class="bi bi-pen me-1"></i>
+                <span id="sigToggleText">Show Certified Signatory Settings (for PDF &amp; Printouts)</span>
+                <i class="bi bi-chevron-down ms-1" id="sigChevron"></i>
+            </button>
+
+            <div class="row g-3 mt-1 d-none" id="signatoryInputsRow">
+                <div class="col-md-3">
+                    <label class="rep-label">Prepared By (Name)</label>
+                    <input type="text" name="prepared_by_name" value="Admin User" class="rep-input w-100">
+                </div>
+                <div class="col-md-3">
+                    <label class="rep-label">Prepared By (Title/Designation)</label>
+                    <input type="text" name="prepared_by_title" value="Facility Operations &amp; Administration" class="rep-input w-100">
+                </div>
+                <div class="col-md-3">
+                    <label class="rep-label">Approved By (Name)</label>
+                    <input type="text" name="approved_by_name" value="Dr. Roberto V. Sanchez" class="rep-input w-100">
+                </div>
+                <div class="col-md-3">
+                    <label class="rep-label">Approved By (Title/Designation)</label>
+                    <input type="text" name="approved_by_title" value="Director, Auxiliary &amp; Physical Services" class="rep-input w-100">
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<div class="rep-kpi-grid">
+            <div class="rep-kpi-card red">
+            <div class="rep-kpi-label">Total Cancelled</div>
+            <div class="rep-kpi-val">9</div>
+            <div class="rep-kpi-sub">Lapsed deadlines &amp; cancellations</div>
+        </div>
+        <div class="rep-kpi-card amber">
+            <div class="rep-kpi-label">Original Booking Value</div>
+            <div class="rep-kpi-val">₱251,100.00</div>
+            <div class="rep-kpi-sub">Released facility capacity</div>
+        </div>
+        <div class="rep-kpi-card green">
+            <div class="rep-kpi-label">Forfeited Deposits</div>
+            <div class="rep-kpi-val">₱0.00</div>
+            <div class="rep-kpi-sub">Institutional revenue retained</div>
+        </div>
+        <div class="rep-kpi-card blue">
+            <div class="rep-kpi-label">Refunds Processed</div>
+            <div class="rep-kpi-val">₱5,000.00</div>
+            <div class="rep-kpi-sub">Security deposits returned</div>
+        </div>
+    </div>
+
+
+<div class="rep-insight-box">
+    <div class="rep-insight-title">
+        <i class="bi bi-lightbulb-fill"></i> Operational Summary &amp; Key Insight
+    </div>
+    <div>During the period (All Records), a total of 9 reservations were processed across university venues. <strong>University Main Auditorium</strong> emerged as the most requested facility with 5 bookings (56% of total demand). Activity peaked in September with 4 bookings. Financial settlement stands at <strong>50%</strong> collected (₱7,000.00), with ₱7,000.00 pending cashier settlement or deadline enforcement.</div>
+</div>
+
+
+<div class="rep-sheet-card">
+
+    
+            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h4 class="fw-bold mb-0 text-dark">
+                    <i class="bi bi-shield-x me-2 text-danger"></i> Cancellations &amp; Security Deposit Forfeiture Audit
+                </h4>
+                <div class="text-muted small">Certified log of cancelled facility reservations, payment deadline expirations, and deposit settlements.</div>
+            </div>
+            <span class="badge bg-danger px-3 py-2">9 Cancelled Bookings</span>
+        </div>
+
+        <div class="rep-table-wrap">
+            <table class="rep-table">
+                <thead>
+                    <tr>
+                        <th style="width: 40px;">#</th>
+                        <th>Ref # &amp; Event</th>
+                        <th>Facility</th>
+                        <th>Client Details</th>
+                        <th>Scheduled Date</th>
+                        <th>Cancellation Details</th>
+                        <th style="text-align: right;">Gross Price</th>
+                        <th style="text-align: right;">Deposit Paid</th>
+                        <th>Deposit Status</th>
+                        <th style="text-align: right;">Forfeited Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                                                                    <tr>
+                            <td class="fw-bold text-muted">1</td>
+                            <td>
+                                <div class="font-monospace fw-bold text-dark">RES-0612D2-08032338</div>
+                                <div class="small text-muted">ALTC</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">University Main Auditorium</div>
+                                <div class="small text-muted">Auditorium</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">Super Admin</div>
+                                <div class="small text-muted">superadmin@sure-system.com</div>
+                            </td>
+                            <td>
+                                <div>Oct 12, 9999</div>
+                                <div class="small text-muted">12:00 PM</div>
+                            </td>
+                            <td>
+                                <div class="small fw-semibold text-danger">
+                                    Cancelled by user/admin
+                                </div>
+                                <div class="small text-muted">Aug 03, 2026 11:38 PM</div>
+                            </td>
+                            <td style="text-align: right;" class="font-monospace">
+                                ₱50,000.00
+                            </td>
+                            <td style="text-align: right;" class="font-monospace text-primary fw-bold">
+                                ₱0.00
+                            </td>
+                            <td>
+                                                                    <span class="badge bg-light text-dark border">Pending</span>
+                                                            </td>
+                            <td style="text-align: right;" class="font-monospace fw-bold text-danger">
+                                ₱0.00
+                            </td>
+                        </tr>
+                                                                    <tr>
+                            <td class="fw-bold text-muted">2</td>
+                            <td>
+                                <div class="font-monospace fw-bold text-dark">RES-121F46-09041721</div>
+                                <div class="small text-muted">Test Event</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">University Main Auditorium</div>
+                                <div class="small text-muted">Auditorium</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">Super Admin</div>
+                                <div class="small text-muted">superadmin@sure-system.com</div>
+                            </td>
+                            <td>
+                                <div>Sep 23, 2026</div>
+                                <div class="small text-muted">12:00 PM</div>
+                            </td>
+                            <td>
+                                <div class="small fw-semibold text-danger">
+                                    Cancelled by user/admin
+                                </div>
+                                <div class="small text-muted">Sep 04, 2026 05:37 PM</div>
+                            </td>
+                            <td style="text-align: right;" class="font-monospace">
+                                ₱5,000.00
+                            </td>
+                            <td style="text-align: right;" class="font-monospace text-primary fw-bold">
+                                ₱0.00
+                            </td>
+                            <td>
+                                                                    <span class="badge bg-light text-dark border">Pending</span>
+                                                            </td>
+                            <td style="text-align: right;" class="font-monospace fw-bold text-danger">
+                                ₱0.00
+                            </td>
+                        </tr>
+                                                                    <tr>
+                            <td class="fw-bold text-muted">3</td>
+                            <td>
+                                <div class="font-monospace fw-bold text-dark">RES-0164AC-09081518</div>
+                                <div class="small text-muted">AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">University Main Auditorium</div>
+                                <div class="small text-muted">Auditorium</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">Guest  User</div>
+                                <div class="small text-muted">guest@sure-system.com</div>
+                            </td>
+                            <td>
+                                <div>Sep 23, 2026</div>
+                                <div class="small text-muted">11:00 PM</div>
+                            </td>
+                            <td>
+                                <div class="small fw-semibold text-danger">
+                                    Cancelled by guest
+                                </div>
+                                <div class="small text-muted">Sep 08, 2026 03:45 PM</div>
+                            </td>
+                            <td style="text-align: right;" class="font-monospace">
+                                ₱40,000.00
+                            </td>
+                            <td style="text-align: right;" class="font-monospace text-primary fw-bold">
+                                ₱0.00
+                            </td>
+                            <td>
+                                                                    <span class="badge bg-light text-dark border">Pending</span>
+                                                            </td>
+                            <td style="text-align: right;" class="font-monospace fw-bold text-danger">
+                                ₱0.00
+                            </td>
+                        </tr>
+                                                                    <tr>
+                            <td class="fw-bold text-muted">4</td>
+                            <td>
+                                <div class="font-monospace fw-bold text-dark">RES-C97F44-09081546</div>
+                                <div class="small text-muted">ANNSNDSDMSFSMNFSNFSNDNFSNMFNMSFNSDFNMSFNNSFDNSFNSF</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">University Main Auditorium</div>
+                                <div class="small text-muted">Auditorium</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">Guest  User</div>
+                                <div class="small text-muted">guest@sure-system.com</div>
+                            </td>
+                            <td>
+                                <div>Sep 18, 2026</div>
+                                <div class="small text-muted">6:31 PM</div>
+                            </td>
+                            <td>
+                                <div class="small fw-semibold text-danger">
+                                    Cancelled by guest
+                                </div>
+                                <div class="small text-muted">Sep 08, 2026 03:46 PM</div>
+                            </td>
+                            <td style="text-align: right;" class="font-monospace">
+                                ₱85,000.00
+                            </td>
+                            <td style="text-align: right;" class="font-monospace text-primary fw-bold">
+                                ₱0.00
+                            </td>
+                            <td>
+                                                                    <span class="badge bg-light text-dark border">Pending</span>
+                                                            </td>
+                            <td style="text-align: right;" class="font-monospace fw-bold text-danger">
+                                ₱0.00
+                            </td>
+                        </tr>
+                                                                    <tr>
+                            <td class="fw-bold text-muted">5</td>
+                            <td>
+                                <div class="font-monospace fw-bold text-dark">RES-E7717E-08250211</div>
+                                <div class="small text-muted">Sports</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">Science &amp; Research Laboratory 1</div>
+                                <div class="small text-muted">Laboratory</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">Super Admin</div>
+                                <div class="small text-muted">superadmin@sure-system.com</div>
+                            </td>
+                            <td>
+                                <div>Sep 07, 2026</div>
+                                <div class="small text-muted">7:00 AM</div>
+                            </td>
+                            <td>
+                                <div class="small fw-semibold text-danger">
+                                    Cancelled by user/admin
+                                </div>
+                                <div class="small text-muted">Aug 25, 2026 02:13 AM</div>
+                            </td>
+                            <td style="text-align: right;" class="font-monospace">
+                                ₱1,600.00
+                            </td>
+                            <td style="text-align: right;" class="font-monospace text-primary fw-bold">
+                                ₱0.00
+                            </td>
+                            <td>
+                                                                    <span class="badge bg-light text-dark border">Pending</span>
+                                                            </td>
+                            <td style="text-align: right;" class="font-monospace fw-bold text-danger">
+                                ₱0.00
+                            </td>
+                        </tr>
+                                                                    <tr>
+                            <td class="fw-bold text-muted">6</td>
+                            <td>
+                                <div class="font-monospace fw-bold text-dark">CASH-NAWL1C5T</div>
+                                <div class="small text-muted">CEM Client Appreciation Day</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">Multi-Purpose Gymnasium</div>
+                                <div class="small text-muted">Sports</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">David Cruz</div>
+                                <div class="small text-muted">david.cruz@sample.test</div>
+                            </td>
+                            <td>
+                                <div>Aug 24, 2026</div>
+                                <div class="small text-muted">1:00 PM</div>
+                            </td>
+                            <td>
+                                <div class="small fw-semibold text-danger">
+                                    Expired unpaid payment window
+                                </div>
+                                <div class="small text-muted">Sep 08, 2026 06:23 AM</div>
+                            </td>
+                            <td style="text-align: right;" class="font-monospace">
+                                ₱14,000.00
+                            </td>
+                            <td style="text-align: right;" class="font-monospace text-primary fw-bold">
+                                ₱3,000.00
+                            </td>
+                            <td>
+                                                                    <span class="badge bg-light text-dark border">Paid</span>
+                                                            </td>
+                            <td style="text-align: right;" class="font-monospace fw-bold text-danger">
+                                ₱0.00
+                            </td>
+                        </tr>
+                                                                    <tr>
+                            <td class="fw-bold text-muted">7</td>
+                            <td>
+                                <div class="font-monospace fw-bold text-dark">RES-2C84B5-07311701</div>
+                                <div class="small text-muted">test</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">University Main Auditorium</div>
+                                <div class="small text-muted">Auditorium</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">Super Admin</div>
+                                <div class="small text-muted">superadmin@sure-system.com</div>
+                            </td>
+                            <td>
+                                <div>Aug 03, 2026</div>
+                                <div class="small text-muted">12:00 PM</div>
+                            </td>
+                            <td>
+                                <div class="small fw-semibold text-danger">
+                                    Cancelled by user/admin
+                                </div>
+                                <div class="small text-muted">Aug 03, 2026 06:25 PM</div>
+                            </td>
+                            <td style="text-align: right;" class="font-monospace">
+                                ₱41,500.00
+                            </td>
+                            <td style="text-align: right;" class="font-monospace text-primary fw-bold">
+                                ₱0.00
+                            </td>
+                            <td>
+                                                                    <span class="badge bg-light text-dark border">Pending</span>
+                                                            </td>
+                            <td style="text-align: right;" class="font-monospace fw-bold text-danger">
+                                ₱0.00
+                            </td>
+                        </tr>
+                                                                    <tr>
+                            <td class="fw-bold text-muted">8</td>
+                            <td>
+                                <div class="font-monospace fw-bold text-dark">SAMPLE-G6RLOAYB</div>
+                                <div class="small text-muted">Cruz Events Showcase 2026</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">Open-Air Amphitheatre</div>
+                                <div class="small text-muted">Outdoor</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">David Cruz</div>
+                                <div class="small text-muted">david.cruz@sample.test</div>
+                            </td>
+                            <td>
+                                <div>Aug 01, 2026</div>
+                                <div class="small text-muted">6:00 PM</div>
+                            </td>
+                            <td>
+                                <div class="small fw-semibold text-danger">
+                                    Client changed venue due to weather concerns.
+                                </div>
+                                <div class="small text-muted">Jul 30, 2026 12:00 AM</div>
+                            </td>
+                            <td style="text-align: right;" class="font-monospace">
+                                ₱14,000.00
+                            </td>
+                            <td style="text-align: right;" class="font-monospace text-primary fw-bold">
+                                ₱5,000.00
+                            </td>
+                            <td>
+                                                                    <span class="badge bg-success rounded-pill px-2 py-1">Refunded</span>
+                                                            </td>
+                            <td style="text-align: right;" class="font-monospace fw-bold text-danger">
+                                ₱0.00
+                            </td>
+                        </tr>
+                                                                    <tr>
+                            <td class="fw-bold text-muted">9</td>
+                            <td>
+                                <div class="font-monospace fw-bold text-dark">HIST-GEUVAOVP</div>
+                                <div class="small text-muted">Corporate Picnic (Cancelled - Rain)</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">Open-Air Amphitheatre</div>
+                                <div class="small text-muted">Outdoor</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">David Cruz</div>
+                                <div class="small text-muted">david.cruz@sample.test</div>
+                            </td>
+                            <td>
+                                <div>Apr 17, 2026</div>
+                                <div class="small text-muted">1:00 PM</div>
+                            </td>
+                            <td>
+                                <div class="small fw-semibold text-danger">
+                                    Cancelled by user/admin
+                                </div>
+                                <div class="small text-muted">Mar 17, 2026 09:36 AM</div>
+                            </td>
+                            <td style="text-align: right;" class="font-monospace">
+                                ₱0.00
+                            </td>
+                            <td style="text-align: right;" class="font-monospace text-primary fw-bold">
+                                ₱0.00
+                            </td>
+                            <td>
+                                                                    <span class="badge bg-light text-dark border">Not_required</span>
+                                                            </td>
+                            <td style="text-align: right;" class="font-monospace fw-bold text-danger">
+                                ₱0.00
+                            </td>
+                        </tr>
+                                    </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-end mt-3 gap-4">
+            <div class="small text-muted">
+                Total Deposits Forfeited: <strong class="text-danger font-monospace">₱0.00</strong>
+            </div>
+            <div class="small text-muted">
+                Total Refunds Issued: <strong class="text-success font-monospace">₱5,000.00</strong>
+            </div>
+        </div>
+
+    
+    
+</div>
+
+<script>
+    function toggleCustomDates(val) {
+        var fromWrap = document.getElementById('fromWrap');
+        var toWrap = document.getElementById('toWrap');
+        if (val === 'custom') {
+            fromWrap.classList.remove('d-none');
+            toWrap.classList.remove('d-none');
+        } else {
+            fromWrap.classList.add('d-none');
+            toWrap.classList.add('d-none');
+        }
+    }
+
+    function toggleSignatoryInputs() {
+        var row = document.getElementById('signatoryInputsRow');
+        var chevron = document.getElementById('sigChevron');
+        var text = document.getElementById('sigToggleText');
+        if (row.classList.contains('d-none')) {
+            row.classList.remove('d-none');
+            chevron.classList.replace('bi-chevron-down', 'bi-chevron-up');
+            text.textContent = 'Hide Certified Signatory Settings';
+        } else {
+            row.classList.add('d-none');
+            chevron.classList.replace('bi-chevron-up', 'bi-chevron-down');
+            text.textContent = 'Show Certified Signatory Settings (for PDF & Printouts)';
+        }
+    }
+</script>
+
+                    </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="modulepreload" href="http://localhost/build/assets/app-CT7-jBz-.js" /><script type="module" src="http://localhost/build/assets/app-CT7-jBz-.js"></script>    <!-- Accessibility Suite Toggle Button -->
+<div id="a11y-suite-trigger-wrapper">
+    <button class="btn btn-primary rounded-circle shadow-lg d-flex align-items-center justify-content-center" 
+            id="a11y-suite-toggle" 
+            aria-label="Open Accessibility Suite" 
+            aria-expanded="false" 
+            title="Accessibility Tools">
+        <i class="bi bi-universal-access-circle fs-2 text-white"></i>
+    </button>
+</div>
+
+<!-- Draggable Accessibility Suite Popup -->
+<div id="a11y-suite-popup" class="a11y-suite-popup shadow-lg" role="dialog" aria-labelledby="a11y-suite-title" aria-hidden="true" tabindex="-1">
+    <!-- Header / Drag Handle -->
+    <div class="a11y-suite-header" id="a11y-suite-header">
+        <div class="d-flex align-items-center">
+            <i class="bi bi-universal-access-circle me-2 fs-4"></i>
+            <h5 id="a11y-suite-title" class="mb-0 fw-bold small text-uppercase letter-spacing-1">Accessibility Suite</h5>
+        </div>
+        <button class="a11y-suite-close" id="a11y-suite-close" aria-label="Close Accessibility Suite">&times;</button>
+    </div>
+    
+    <div class="a11y-suite-body">
+        <!-- Section 1: Experience Profiles -->
+        <div class="a11y-suite-section">
+            <h6 class="a11y-suite-section-title">
+                <i class="bi bi-person-gear me-2"></i> Browsing Experience Profiles
+            </h6>
+            
+            <div class="a11y-suite-grid-list">
+                <!-- Seizure Safety -->
+                <div class="a11y-suite-card">
+                    <div class="a11y-suite-card-content">
+                        <span class="a11y-suite-card-label">Seizure Safety</span>
+                        <small class="a11y-suite-card-desc">Reduces motion & visual triggers</small>
+                    </div>
+                    <label class="a11y-suite-switch">
+                        <input type="checkbox" id="profile-seizure-safety" data-a11y-profile="seizure-safety">
+                        <span class="a11y-suite-slider"></span>
+                    </label>
+                </div>
+
+                <!-- Low Vision Support -->
+                <div class="a11y-suite-card">
+                    <div class="a11y-suite-card-content">
+                        <span class="a11y-suite-card-label">Low Vision Support</span>
+                        <small class="a11y-suite-card-desc">Improves font legibility & clarity</small>
+                    </div>
+                    <label class="a11y-suite-switch">
+                        <input type="checkbox" id="profile-low-vision" data-a11y-profile="low-vision">
+                        <span class="a11y-suite-slider"></span>
+                    </label>
+                </div>
+
+                <!-- ADHD Friendly -->
+                <div class="a11y-suite-card">
+                    <div class="a11y-suite-card-content">
+                        <span class="a11y-suite-card-label">ADHD Friendly</span>
+                        <small class="a11y-suite-card-desc">Ruler focus & lower distractions</small>
+                    </div>
+                    <label class="a11y-suite-switch">
+                        <input type="checkbox" id="profile-adhd" data-a11y-profile="adhd">
+                        <span class="a11y-suite-slider"></span>
+                    </label>
+                </div>
+
+                <!-- Reading & Cognitive -->
+                <div class="a11y-suite-card">
+                    <div class="a11y-suite-card-content">
+                        <span class="a11y-suite-card-label">Reading & Cognitive</span>
+                        <small class="a11y-suite-card-desc">Simplifies content structure</small>
+                    </div>
+                    <label class="a11y-suite-switch">
+                        <input type="checkbox" id="profile-cognitive" data-a11y-profile="cognitive">
+                        <span class="a11y-suite-slider"></span>
+                    </label>
+                </div>
+
+                <!-- Keyboard Navigation -->
+                <div class="a11y-suite-card">
+                    <div class="a11y-suite-card-content">
+                        <span class="a11y-suite-card-label">Keyboard Navigation</span>
+                        <small class="a11y-suite-card-desc">Keyboard helper guide & triggers</small>
+                    </div>
+                    <label class="a11y-suite-switch">
+                        <input type="checkbox" id="profile-keyboard-nav" data-a11y-profile="keyboard-nav">
+                        <span class="a11y-suite-slider"></span>
+                    </label>
+                </div>
+
+                <!-- Screen Reader -->
+                <div class="a11y-suite-card">
+                    <div class="a11y-suite-card-content">
+                        <span class="a11y-suite-card-label">Screen Reader</span>
+                        <small class="a11y-suite-card-desc">TTS voice narrator on hover/focus</small>
+                    </div>
+                    <label class="a11y-suite-switch">
+                        <input type="checkbox" id="profile-screen-reader" data-a11y-profile="screen-reader">
+                        <span class="a11y-suite-slider"></span>
+                    </label>
+                </div>
+
+                <!-- Older Adults -->
+                <div class="a11y-suite-card">
+                    <div class="a11y-suite-card-content">
+                        <span class="a11y-suite-card-label">Older Adults</span>
+                        <small class="a11y-suite-card-desc">Large layout targets & contrast</small>
+                    </div>
+                    <label class="a11y-suite-switch">
+                        <input type="checkbox" id="profile-older-adults" data-a11y-profile="older-adults">
+                        <span class="a11y-suite-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Color Adjustments -->
+        <div class="a11y-suite-section">
+            <h6 class="a11y-suite-section-title">
+                <i class="bi bi-palette me-2"></i> Color Adjustments
+            </h6>
+            
+            <div class="a11y-suite-modes-grid">
+                <button class="a11y-suite-mode-btn" data-a11y-mode="dark" id="btn-mode-dark">
+                    <i class="bi bi-moon-stars d-block fs-5 mb-1"></i>
+                    Dark Contrast
+                </button>
+                <button class="a11y-suite-mode-btn" data-a11y-mode="light" id="btn-mode-light">
+                    <i class="bi bi-brightness-high d-block fs-5 mb-1"></i>
+                    Light Contrast
+                </button>
+                <button class="a11y-suite-mode-btn" data-a11y-mode="high" id="btn-mode-high">
+                    <i class="bi bi-circle-half d-block fs-5 mb-1"></i>
+                    High Contrast
+                </button>
+                <button class="a11y-suite-mode-btn" data-a11y-mode="monochrome" id="btn-mode-monochrome">
+                    <i class="bi bi-droplet-slash d-block fs-5 mb-1"></i>
+                    Monochrome
+                </button>
+                <button class="a11y-suite-mode-btn" data-a11y-mode="low-sat" id="btn-mode-low-sat">
+                    <i class="bi bi-droplet d-block fs-5 mb-1 opacity-50"></i>
+                    Low Saturation
+                </button>
+                <button class="a11y-suite-mode-btn" data-a11y-mode="high-sat" id="btn-mode-high-sat">
+                    <i class="bi bi-droplet-fill d-block fs-5 mb-1 text-primary"></i>
+                    High Saturation
+                </button>
+            </div>
+
+            <!-- Color Pickers -->
+            <div class="a11y-suite-pickers">
+                <!-- Text Colors -->
+                <div class="a11y-suite-picker-group mb-2">
+                    <span class="a11y-suite-picker-label"><i class="bi bi-type me-1"></i> Text Colors</span>
+                    <div class="a11y-suite-circles" id="picker-text-colors">
+                        <button class="a11y-suite-circle color-blue" data-a11y-color-type="text" data-a11y-color="#1e40af" title="Blue"></button>
+                        <button class="a11y-suite-circle color-purple" data-a11y-color-type="text" data-a11y-color="#6b21a8" title="Purple"></button>
+                        <button class="a11y-suite-circle color-red" data-a11y-color-type="text" data-a11y-color="#b91c1c" title="Red"></button>
+                        <button class="a11y-suite-circle color-orange" data-a11y-color-type="text" data-a11y-color="#c2410c" title="Orange"></button>
+                        <button class="a11y-suite-circle color-teal" data-a11y-color-type="text" data-a11y-color="#0f766e" title="Teal"></button>
+                        <button class="a11y-suite-circle color-green" data-a11y-color-type="text" data-a11y-color="#15803d" title="Green"></button>
+                        <button class="a11y-suite-circle color-white border" data-a11y-color-type="text" data-a11y-color="#ffffff" title="White"></button>
+                        <button class="a11y-suite-circle color-black" data-a11y-color-type="text" data-a11y-color="#000000" title="Black"></button>
+                    </div>
+                </div>
+
+                <!-- Title Colors -->
+                <div class="a11y-suite-picker-group mb-2">
+                    <span class="a11y-suite-picker-label"><i class="bi bi-hash me-1"></i> Title Colors</span>
+                    <div class="a11y-suite-circles" id="picker-title-colors">
+                        <button class="a11y-suite-circle color-blue" data-a11y-color-type="title" data-a11y-color="#1e40af" title="Blue"></button>
+                        <button class="a11y-suite-circle color-purple" data-a11y-color-type="title" data-a11y-color="#6b21a8" title="Purple"></button>
+                        <button class="a11y-suite-circle color-red" data-a11y-color-type="title" data-a11y-color="#b91c1c" title="Red"></button>
+                        <button class="a11y-suite-circle color-orange" data-a11y-color-type="title" data-a11y-color="#c2410c" title="Orange"></button>
+                        <button class="a11y-suite-circle color-teal" data-a11y-color-type="title" data-a11y-color="#0f766e" title="Teal"></button>
+                        <button class="a11y-suite-circle color-green" data-a11y-color-type="title" data-a11y-color="#15803d" title="Green"></button>
+                        <button class="a11y-suite-circle color-white border" data-a11y-color-type="title" data-a11y-color="#ffffff" title="White"></button>
+                        <button class="a11y-suite-circle color-black" data-a11y-color-type="title" data-a11y-color="#000000" title="Black"></button>
+                    </div>
+                </div>
+
+                <!-- Background Colors -->
+                <div class="a11y-suite-picker-group">
+                    <span class="a11y-suite-picker-label"><i class="bi bi-window-sidebar me-1"></i> Background Colors</span>
+                    <div class="a11y-suite-circles" id="picker-bg-colors">
+                        <button class="a11y-suite-circle color-blue" data-a11y-color-type="bg" data-a11y-color="#1e40af" title="Blue"></button>
+                        <button class="a11y-suite-circle color-purple" data-a11y-color-type="bg" data-a11y-color="#6b21a8" title="Purple"></button>
+                        <button class="a11y-suite-circle color-red" data-a11y-color-type="bg" data-a11y-color="#b91c1c" title="Red"></button>
+                        <button class="a11y-suite-circle color-orange" data-a11y-color-type="bg" data-a11y-color="#c2410c" title="Orange"></button>
+                        <button class="a11y-suite-circle color-teal" data-a11y-color-type="bg" data-a11y-color="#0f766e" title="Teal"></button>
+                        <button class="a11y-suite-circle color-green" data-a11y-color-type="bg" data-a11y-color="#15803d" title="Green"></button>
+                        <button class="a11y-suite-circle color-white border" data-a11y-color-type="bg" data-a11y-color="#ffffff" title="White"></button>
+                        <button class="a11y-suite-circle color-black" data-a11y-color-type="bg" data-a11y-color="#000000" title="Black"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Orientation Adjustments -->
+        <div class="a11y-suite-section">
+            <h6 class="a11y-suite-section-title">
+                <i class="bi bi-sliders me-2"></i> Orientation Adjustments
+            </h6>
+            
+            <div class="a11y-suite-grid-list">
+                <!-- Text Scaling -->
+                <div class="a11y-suite-card">
+                    <div class="a11y-suite-card-content">
+                        <span class="a11y-suite-card-label">Text Scaling</span>
+                        <small class="a11y-suite-card-desc">Adjust page font size</small>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-sm btn-light border px-2 py-0" id="scale-down" aria-label="Decrease Scale">-</button>
+                        <span class="fw-bold small" id="scale-val">100%</span>
+                        <button class="btn btn-sm btn-light border px-2 py-0" id="scale-up" aria-label="Increase Scale">+</button>
+                    </div>
+                </div>
+
+                <!-- Mute Sounds -->
+                <div class="a11y-suite-card">
+                    <div class="a11y-suite-card-content">
+                        <span class="a11y-suite-card-label">Mute Sounds</span>
+                        <small class="a11y-suite-card-desc">Blocks audio playback</small>
+                    </div>
+                    <label class="a11y-suite-switch">
+                        <input type="checkbox" id="control-mute" data-a11y-control="mute">
+                        <span class="a11y-suite-slider"></span>
+                    </label>
+                </div>
+
+                <!-- Hide Images -->
+                <div class="a11y-suite-card">
+                    <div class="a11y-suite-card-content">
+                        <span class="a11y-suite-card-label">Hide Images</span>
+                        <small class="a11y-suite-card-desc">Removes all images & svgs</small>
+                    </div>
+                    <label class="a11y-suite-switch">
+                        <input type="checkbox" id="control-hide-images" data-a11y-control="hide-images">
+                        <span class="a11y-suite-slider"></span>
+                    </label>
+                </div>
+
+                <!-- Stop Animations -->
+                <div class="a11y-suite-card">
+                    <div class="a11y-suite-card-content">
+                        <span class="a11y-suite-card-label">Stop Animations</span>
+                        <small class="a11y-suite-card-desc">Freezes all transitions</small>
+                    </div>
+                    <label class="a11y-suite-switch">
+                        <input type="checkbox" id="control-stop-animations" data-a11y-control="stop-animations">
+                        <span class="a11y-suite-slider"></span>
+                    </label>
+                </div>
+
+                <!-- Highlight Focus -->
+                <div class="a11y-suite-card">
+                    <div class="a11y-suite-card-content">
+                        <span class="a11y-suite-card-label">Highlight Focus</span>
+                        <small class="a11y-suite-card-desc">Prominent focus borders</small>
+                    </div>
+                    <label class="a11y-suite-switch">
+                        <input type="checkbox" id="control-highlight-focus" data-a11y-control="highlight-focus">
+                        <span class="a11y-suite-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="a11y-suite-footer">
+        <button class="btn btn-danger w-100 fw-bold text-white rounded-3 py-2 shadow-sm" id="a11y-suite-reset">
+            <i class="bi bi-arrow-counterclockwise me-1"></i> Reset All Settings
+        </button>
+    </div>
+</div>
+
+<!-- Helper Elements -->
+<div id="a11y-reading-ruler" class="a11y-reading-ruler" aria-hidden="true"></div>
+<div id="a11y-keyboard-guide" class="a11y-keyboard-guide shadow-lg" aria-hidden="true">
+    <div class="d-flex align-items-center mb-2">
+        <i class="bi bi-keyboard me-2 fs-5 text-primary"></i>
+        <h6 class="mb-0 fw-bold">Keyboard Navigation Mode</h6>
+    </div>
+    <ul class="mb-0 small ps-3">
+        <li><strong>Tab</strong> to move forward</li>
+        <li><strong>Shift + Tab</strong> to move backward</li>
+        <li><strong>Enter</strong> to activate</li>
+        <li><strong>Esc</strong> to close suite</li>
+    </ul>
+</div>
+
+<style>
+    /* ── Floating Trigger ── */
+    #a11y-suite-trigger-wrapper {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        z-index: 9999;
+    }
+    #a11y-suite-toggle {
+        width: 56px;
+        height: 56px;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        border: 2px solid rgba(255,255,255,0.8);
+    }
+    #a11y-suite-toggle:hover {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 10px 25px rgba(var(--brand-primary-rgb, 37, 99, 235), 0.4);
+    }
+    
+    /* ── Draggable Popup ── */
+    .a11y-suite-popup {
+        position: fixed;
+        top: 100px;
+        right: 2rem;
+        width: 380px;
+        max-height: 85vh;
+        background: #ffffff;
+        border-radius: 16px;
+        z-index: 10000;
+        display: flex;
+        flex-direction: column;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(20px) scale(0.95);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        border: 1px solid rgba(0,0,0,0.08);
+        overflow: hidden;
+        user-select: none;
+    }
+    .a11y-suite-popup.is-open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+    }
+    @media (max-width: 480px) {
+        .a11y-suite-popup {
+            width: calc(100% - 2rem);
+            right: 1rem;
+            left: 1rem;
+            top: 1rem !important;
+            bottom: 1rem !important;
+            max-height: calc(100vh - 2rem);
+        }
+    }
+    
+    .a11y-suite-header {
+        padding: 1rem 1.25rem;
+        background: #0f172a;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: move;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .a11y-suite-close {
+        background: transparent;
+        border: none;
+        color: #ffffff;
+        font-size: 1.5rem;
+        line-height: 1;
+        padding: 0;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+    .a11y-suite-close:hover { opacity: 1; }
+    
+    .a11y-suite-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1.25rem;
+        background: #f8fafc;
+    }
+    
+    .a11y-suite-footer {
+        padding: 1rem 1.25rem;
+        background: #ffffff;
+        border-top: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    /* ── Sections ── */
+    .a11y-suite-section { margin-bottom: 1.5rem; }
+    .a11y-suite-section-title {
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: #64748b;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    /* ── Experience Cards ── */
+    .a11y-suite-grid-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .a11y-suite-card {
+        background: #ffffff;
+        border: 1px solid rgba(0,0,0,0.05);
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: all 0.2s;
+    }
+    .a11y-suite-card:hover { border-color: rgba(var(--brand-primary-rgb, 37, 99, 235), 0.2); background: #fff; }
+    .a11y-suite-card-content { display: flex; flex-direction: column; }
+    .a11y-suite-card-label { font-size: 0.85rem; font-weight: 700; color: #1e293b; }
+    .a11y-suite-card-desc { font-size: 0.7rem; color: #64748b; margin-top: 1px; }
+    
+    /* ── Switches ── */
+    .a11y-suite-switch {
+        position: relative;
+        display: inline-block;
+        width: 40px;
+        height: 20px;
+        flex-shrink: 0;
+    }
+    .a11y-suite-switch input { opacity: 0; width: 0; height: 0; }
+    .a11y-suite-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: #e2e8f0;
+        transition: .3s;
+        border-radius: 20px;
+    }
+    .a11y-suite-slider:before {
+        position: absolute;
+        content: "";
+        height: 14px;
+        width: 14px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: .3s;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .a11y-suite-switch input:checked + .a11y-suite-slider { background-color: var(--brand-primary, #2563eb); }
+    .a11y-suite-switch input:checked + .a11y-suite-slider:before { transform: translateX(20px); }
+    
+    /* ── Mode Buttons Grid ── */
+    .a11y-suite-modes-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    .a11y-suite-mode-btn {
+        background: #ffffff;
+        border: 1px solid rgba(0,0,0,0.05);
+        border-radius: 10px;
+        padding: 0.75rem 0.5rem;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #475569;
+        transition: all 0.2s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .a11y-suite-mode-btn:hover { background: #f1f5f9; border-color: #cbd5e1; }
+    .a11y-suite-mode-btn.active {
+        background: var(--brand-primary, #2563eb);
+        color: #ffffff !important;
+        border-color: var(--brand-primary, #2563eb);
+        box-shadow: 0 4px 12px rgba(var(--brand-primary-rgb, 37, 99, 235), 0.3);
+    }
+    .a11y-suite-mode-btn.active i { color: #ffffff !important; opacity: 1 !important; }
+    
+    /* ── Color Pickers ── */
+    .a11y-suite-pickers { margin-top: 0.75rem; }
+    .a11y-suite-picker-group { background: #ffffff; padding: 0.75rem; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); }
+    .a11y-suite-picker-label { display: block; font-size: 0.7rem; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 0.75rem; }
+    .a11y-suite-circles { display: flex; flex-wrap: wrap; gap: 0.65rem; }
+    .a11y-suite-circle {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        cursor: pointer;
+        transition: all 0.2s;
+        box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
+    }
+    .a11y-suite-circle:hover { transform: scale(1.15); }
+    .a11y-suite-circle.active {
+        border-color: var(--brand-primary, #2563eb) !important;
+        box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px var(--brand-primary, #2563eb);
+    }
+    
+    /* Circle Colors */
+    .color-blue { background: #1e40af; }
+    .color-purple { background: #6b21a8; }
+    .color-red { background: #b91c1c; }
+    .color-orange { background: #c2410c; }
+    .color-teal { background: #0f766e; }
+    .color-green { background: #15803d; }
+    .color-white { background: #ffffff; }
+    .color-black { background: #000000; }
+    
+    /* ── Ruler & Guide ── */
+    .a11y-reading-ruler {
+        position: fixed; left: 0; width: 100%; height: 32px;
+        background: rgba(254, 240, 138, 0.35);
+        border-top: 2px solid #eab308; border-bottom: 2px solid #eab308;
+        pointer-events: none; z-index: 100010; display: none;
+    }
+    html.a11y-profile-adhd .a11y-reading-ruler { display: block; }
+    
+    .a11y-keyboard-guide {
+        position: fixed; bottom: 2rem; left: 2rem; z-index: 100002;
+        background: #ffffff; color: #1e293b; padding: 1rem 1.25rem;
+        border-radius: 12px; border: 2px solid var(--brand-primary, #2563eb);
+        max-width: 280px; opacity: 0; visibility: hidden;
+        transition: all 0.3s ease;
+    }
+    .a11y-keyboard-guide.show { opacity: 1; visibility: visible; }
+    
+    /* ── Global A11y Classes ── */
+    html.a11y-profile-seizure-safety * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+    html.a11y-profile-low-vision { font-size: 1.2rem !important; }
+    html.a11y-profile-low-vision p, html.a11y-profile-low-vision span, html.a11y-profile-low-vision li { font-weight: 500 !important; color: #000 !important; }
+    html.a11y-profile-older-adults { font-size: 1.25rem !important; }
+    html.a11y-profile-older-adults button, html.a11y-profile-older-adults a.btn { min-height: 48px !important; }
+    
+    /* ── DARK MODE ── */
+    html.a11y-mode-dark { color-scheme: dark; }
+    html.a11y-mode-dark body { background-color: #0f172a !important; color: #f1f5f9 !important; }
+    html.a11y-mode-dark .card, 
+    html.a11y-mode-dark .main-content,
+    html.a11y-mode-dark .a11y-suite-popup,
+    html.a11y-mode-dark .a11y-suite-footer { background-color: #1e293b !important; color: #f1f5f9 !important; border-color: rgba(255,255,255,0.1) !important; }
+    html.a11y-mode-dark .a11y-suite-body,
+    html.a11y-mode-dark .a11y-suite-card,
+    html.a11y-mode-dark .a11y-suite-mode-btn,
+    html.a11y-mode-dark .a11y-suite-picker-group { background-color: #0f172a !important; color: #f1f5f9 !important; border-color: rgba(255,255,255,0.08) !important; }
+    html.a11y-mode-dark .a11y-suite-card-label { color: #f1f5f9 !important; }
+    html.a11y-mode-dark .a11y-suite-card-desc { color: #94a3b8 !important; }
+    html.a11y-mode-dark .a11y-suite-mode-btn:hover { background: #1e293b; }
+    
+    /* Orientation Control Classes */
+    html.a11y-control-hide-images img,
+    html.a11y-control-hide-images svg:not(.bi),
+    html.a11y-control-hide-images [style*="background-image"] { display: none !important; }
+    
+    html.a11y-control-stop-animations * { animation: none !important; transition: none !important; }
+    
+    html.a11y-control-highlight-focus *:focus { outline: 4px solid #facc15 !important; outline-offset: 2px !important; }
+
+    /* Other modes */
+    html.a11y-mode-monochrome { filter: grayscale(100%) !important; }
+    html.a11y-mode-low-sat { filter: saturate(30%) !important; }
+    html.a11y-mode-high-sat { filter: saturate(200%) !important; }
+    html.a11y-mode-high { filter: contrast(150%) !important; }
+</style>
+
+<script>
+(function() {
+    const STORAGE_KEY = 'a11y_suite_v3';
+    const STATE = {
+        isOpen: false,
+        profiles: {},
+        mode: null,
+        colors: { text: null, title: null, bg: null },
+        controls: {},
+        scale: 1.0,
+        pos: { x: null, y: null }
+    };
+
+    const DOM = {
+        trigger: document.getElementById('a11y-suite-toggle'),
+        popup: document.getElementById('a11y-suite-popup'),
+        header: document.getElementById('a11y-suite-header'),
+        close: document.getElementById('a11y-suite-close'),
+        reset: document.getElementById('a11y-suite-reset'),
+        ruler: document.getElementById('a11y-reading-ruler'),
+        guide: document.getElementById('a11y-keyboard-guide'),
+        scaleVal: document.getElementById('scale-val')
+    };
+
+    function init() {
+        loadState();
+        bindEvents();
+        applyState();
+    }
+
+    function loadState() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) Object.assign(STATE, JSON.parse(saved));
+    }
+
+    function saveState() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(STATE));
+    }
+
+    function bindEvents() {
+        DOM.trigger.onclick = togglePopup;
+        DOM.close.onclick = closePopup;
+        DOM.reset.onclick = resetAll;
+
+        // Draggable
+        let isDragging = false;
+        let startX, startY;
+        DOM.header.onmousedown = (e) => {
+            if (window.innerWidth <= 480) return;
+            isDragging = true;
+            startX = e.clientX - DOM.popup.offsetLeft;
+            startY = e.clientY - DOM.popup.offsetTop;
+            document.addEventListener('mousemove', onDrag);
+            document.addEventListener('mouseup', stopDrag);
+        };
+        function onDrag(e) {
+            if (!isDragging) return;
+            DOM.popup.style.left = (e.clientX - startX) + 'px';
+            DOM.popup.style.top = (e.clientY - startY) + 'px';
+            DOM.popup.style.right = 'auto';
+            STATE.pos = { x: DOM.popup.offsetLeft, y: DOM.popup.offsetTop };
+        }
+        function stopDrag() {
+            isDragging = false;
+            document.removeEventListener('mousemove', onDrag);
+            document.removeEventListener('mouseup', stopDrag);
+            saveState();
+        }
+
+        // Toggles
+        document.querySelectorAll('[data-a11y-profile]').forEach(el => {
+            el.onchange = () => {
+                STATE.profiles[el.dataset.a11yProfile] = el.checked;
+                applyState(); saveState();
+            };
+        });
+
+        document.querySelectorAll('[data-a11y-control]').forEach(el => {
+            el.onchange = () => {
+                STATE.controls[el.dataset.a11yControl] = el.checked;
+                applyState(); saveState();
+            };
+        });
+
+        document.querySelectorAll('[data-a11y-mode]').forEach(el => {
+            el.onclick = () => {
+                const m = el.dataset.a11yMode;
+                STATE.mode = (STATE.mode === m) ? null : m;
+                applyState(); saveState();
+            };
+        });
+
+        document.querySelectorAll('[data-a11y-color]').forEach(el => {
+            el.onclick = () => {
+                const { a11yColorType, a11yColor } = el.dataset;
+                STATE.colors[a11yColorType] = (STATE.colors[a11yColorType] === a11yColor) ? null : a11yColor;
+                applyState(); saveState();
+            };
+        });
+
+        // Scale
+        document.getElementById('scale-up').onclick = () => { STATE.scale = Math.min(1.8, STATE.scale + 0.1); applyState(); saveState(); };
+        document.getElementById('scale-down').onclick = () => { STATE.scale = Math.max(0.7, STATE.scale - 0.1); applyState(); saveState(); };
+
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && STATE.isOpen) closePopup(); });
+        document.addEventListener('mousemove', e => { if (STATE.profiles.adhd) DOM.ruler.style.top = (e.clientY - 16) + 'px'; });
+    }
+
+    function togglePopup() { STATE.isOpen = !STATE.isOpen; applyPopupState(); saveState(); }
+    function closePopup() { STATE.isOpen = false; applyPopupState(); saveState(); }
+    function applyPopupState() {
+        DOM.popup.classList.toggle('is-open', STATE.isOpen);
+        DOM.trigger.setAttribute('aria-expanded', STATE.isOpen);
+        if (STATE.isOpen) DOM.popup.focus();
+    }
+
+    function applyState() {
+        const html = document.documentElement;
+        
+        // Ensure clean slate for profiles/controls classes
+        [...html.classList].forEach(cls => {
+            if (cls.startsWith('a11y-profile-') || cls.startsWith('a11y-control-')) {
+                html.classList.remove(cls);
+            }
+        });
+
+        Object.keys(STATE.profiles).forEach(p => {
+            if (STATE.profiles[p]) html.classList.add(`a11y-profile-${p}`);
+            const input = document.getElementById(`profile-${p}`);
+            if (input) input.checked = !!STATE.profiles[p];
+        });
+
+        Object.keys(STATE.controls).forEach(c => {
+            if (STATE.controls[c]) html.classList.add(`a11y-control-${c}`);
+            const input = document.getElementById(`control-${c}`);
+            if (input) input.checked = !!STATE.controls[c];
+        });
+
+        ['dark', 'light', 'high', 'monochrome', 'low-sat', 'high-sat'].forEach(m => {
+            const active = STATE.mode === m;
+            html.classList.toggle(`a11y-mode-${m}`, active);
+            const btn = document.getElementById(`btn-mode-${m}`);
+            if (btn) btn.classList.toggle('active', active);
+        });
+
+        // Dynamic CSS
+        let style = document.getElementById('a11y-dynamic-css');
+        if (!style) { style = document.createElement('style'); style.id = 'a11y-dynamic-css'; document.head.appendChild(style); }
+        let css = '';
+        if (STATE.colors.text) css += `html body, html p, html span, html li, html a:not(.btn) { color: ${STATE.colors.text} !important; }`;
+        if (STATE.colors.title) css += `html h1, html h2, html h3, html h4, html h5, html h6 { color: ${STATE.colors.title} !important; }`;
+        if (STATE.colors.bg) css += `html body, html main, html .card, html .main-content { background-color: ${STATE.colors.bg} !important; }`;
+        style.innerHTML = css;
+
+        document.querySelectorAll('[data-a11y-color]').forEach(el => {
+            el.classList.toggle('active', STATE.colors[el.dataset.a11yColorType] === el.dataset.a11yColor);
+        });
+
+        html.style.fontSize = (STATE.scale * 100) + '%';
+        DOM.scaleVal.innerText = Math.round(STATE.scale * 100) + '%';
+        DOM.guide.classList.toggle('show', !!STATE.profiles['keyboard-nav']);
+        DOM.ruler.style.display = STATE.profiles['adhd'] ? 'block' : 'none';
+
+        if (STATE.pos.x !== null && window.innerWidth > 480) {
+            DOM.popup.style.left = STATE.pos.x + 'px';
+            DOM.popup.style.top = STATE.pos.y + 'px';
+            DOM.popup.style.right = 'auto';
+        }
+
+        window.dispatchEvent(new CustomEvent('branding-changed'));
+        if (STATE.mode === 'dark') {
+            document.querySelectorAll('img.brand-logo-auto').forEach(img => {
+                if (window.__brandWhite) img.src = window.__brandWhite;
+            });
+        }
+    }
+
+    function resetAll() {
+        STATE.profiles = {}; STATE.mode = null; STATE.colors = { text: null, title: null, bg: null };
+        STATE.controls = {}; STATE.scale = 1.0;
+        
+        // Explicitly uncheck all inputs
+        document.querySelectorAll('[data-a11y-profile], [data-a11y-control]').forEach(el => el.checked = false);
+        
+        applyState(); saveState();
+    }
+
+    init();
+})();
+</script>
+    <script>
+(function () {
+    function pickForBg(lum) {
+        return lum < 110
+            ? (window.__brandWhite || window.__brandSystem)
+            : (window.__brandLight || window.__brandDark || window.__brandSystem);
+    }
+    function luminanceOf(el) {
+        var node = el;
+        while (node && node !== document.body) {
+            var bg = getComputedStyle(node).backgroundColor;
+            var m = bg && bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+            if (m) {
+                // Fully transparent layers are ignored — keep walking up.
+                if (m[4] !== undefined && parseFloat(m[4]) > 0.5) {
+                    return 0.299 * +m[1] + 0.587 * +m[2] + 0.114 * +m[3];
+                }
+                if (m[4] === undefined) {
+                    return 0.299 * +m[1] + 0.587 * +m[2] + 0.114 * +m[3];
+                }
+            }
+            node = node.parentElement;
+        }
+        return 255; // transparent all the way up = light page
+    }
+    function run() {
+        document.querySelectorAll('img.brand-logo-auto').forEach(function (img) {
+            var nav = img.closest('.hn-nav');
+            if (nav) {
+                // The Homepage navbar is an intentional overlay. Its own
+                // scrolled state is the stable contrast surface; sampling the
+                // hero video/poster behind it is unreliable and can flip the
+                // CMS logo variant while media frames change.
+                var lightOnDark = img.getAttribute('data-logo-light') || window.__brandWhite || window.__brandSystem;
+                var darkOnLight = img.getAttribute('data-logo-dark') || window.__brandLight || window.__brandDark || window.__brandSystem;
+                img.src = nav.classList.contains('scrolled') ? darkOnLight : lightOnDark;
+                return;
+            }
+            var guestNav = img.closest('.navbar-sure');
+            if (guestNav) {
+                // Guest Panel navigation is a persistent dark gradient. Its
+                // explicit data attributes keep the variant independent of
+                // CSS gradient parsing and ancestor luminance heuristics.
+                img.src = img.getAttribute('data-logo-light') || window.__brandWhite || window.__brandSystem;
+                return;
+            }
+            var panelSidebar = img.closest('.sidebar');
+            if (panelSidebar) {
+                // Staff, Admin, SuperAdmin, and Cashier use the CMS dark
+                // sidebar surface. Keep the resolver explicit so these panel
+                // logos do not depend on transparent wrapper elements or on
+                // whether the sidebar theme is expressed through a CSS var.
+                var panelLight = img.getAttribute('data-logo-light') || window.__brandWhite || window.__brandSystem;
+                var panelDark = img.getAttribute('data-logo-dark') || window.__brandLight || window.__brandDark || window.__brandSystem;
+                var panelLuminance = luminanceOf(panelSidebar);
+                img.src = panelLuminance < 150 ? panelLight : panelDark;
+                return;
+            }
+            img.src = pickForBg(luminanceOf(img));
+        });
+    }
+    window.__brandWhite  = "http:\/\/localhost\/uploads\/branding\/MHZ9OskDWI18KtPY7oaG.png";
+    window.__brandLight  = "http:\/\/localhost\/uploads\/branding\/84eMgb2TaQuvhLcCmfmj.png";
+    window.__brandDark   = "http:\/\/localhost\/uploads\/branding\/84eMgb2TaQuvhLcCmfmj.png";
+    window.__brandSystem = "http:\/\/localhost\/uploads\/branding\/PInh0245kv9HYKa3BlIO.png";
+    if (document.readyState === 'complete') { run(); }
+    else { window.addEventListener('load', run); run(); }
+    // React when the CMS toggles the mode without a full reload.
+    window.addEventListener('branding-changed', run);
+    // Re-measure when navbars switch to a scrolled (white) background.
+    var scrollTimer = null;
+    window.addEventListener('scroll', function () {
+        if (scrollTimer) { clearTimeout(scrollTimer); }
+        scrollTimer = setTimeout(run, 80);
+    }, { passive: true });
+})();
+</script>
+</body>
+</html>
+

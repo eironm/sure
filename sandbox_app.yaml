@@ -1,0 +1,5 @@
+kind: wasmer.io/App.v0
+name: Sandbox
+owner: sure
+package: .
+app_id: da_2l9IzteU7bma

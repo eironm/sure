@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Luxury Calendar Font Utilities */
+@layer utilities {
+    .font-playfair {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    .font-inter {
+        font-family: 'Inter', sans-serif;
+    }
+}
+
+/* SPA Navigation Loading State */
+.loading-content {
+    position: relative;
+    transition: opacity 0.3s ease;
+}
+
+.loading-content::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--brand-primary, #7c3aed), transparent);
+    z-index: 9999;
+    animation: spa-loading 1.5s infinite linear;
+}
+
+@keyframes spa-loading {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}

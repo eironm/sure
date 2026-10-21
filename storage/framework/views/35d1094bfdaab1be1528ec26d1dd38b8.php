@@ -1,0 +1,392 @@
+<!-- Customized Cancel Booking Confirmation Modal -->
+<div id="cancelBookingModal" class="cbm-overlay" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="cbmTitle">
+    <div class="cbm-dialog">
+        <div class="cbm-card">
+            <!-- Top close button -->
+            <button type="button" class="cbm-close-btn" onclick="closeCancelBookingModal()" aria-label="Close">
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+            <!-- Icon Badge -->
+            <div class="cbm-icon-wrap">
+                <i class="bi bi-calendar-x text-danger"></i>
+            </div>
+
+            <!-- Title & Context -->
+            <h4 id="cbmTitle" class="cbm-title">Cancel Reservation?</h4>
+            
+            <div class="cbm-meta-box">
+                <span id="cbmRef" class="cbm-ref-pill">#RES-000000</span>
+                <div id="cbmFacilityWrap" class="cbm-facility-text">
+                    <i class="bi bi-geo-alt-fill text-primary me-1"></i><span id="cbmFacility">Facility Name</span>
+                </div>
+            </div>
+
+            <p class="cbm-message">
+                Are you sure you want to cancel this booking? This will immediately cancel your reservation and free the reserved facility schedule for others.
+            </p>
+
+            <!-- Non-refundable Deposit Warning -->
+            <div id="cbmDepositAlert" class="cbm-deposit-alert d-none">
+                <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                <span><strong>Notice:</strong> Any downpayment or deposit previously paid is <strong>non-refundable</strong>.</span>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="cbm-actions">
+                <button type="button" class="cbm-btn cbm-btn-secondary" onclick="closeCancelBookingModal()">
+                    Keep Booking
+                </button>
+                <button type="button" id="cbmConfirmBtn" class="cbm-btn cbm-btn-danger" onclick="submitCancelBookingForm()">
+                    <i class="bi bi-x-circle-fill me-1"></i> Yes, Cancel Booking
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .cbm-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 99999;
+        background: rgba(15, 23, 42, 0.68);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.25rem;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+
+    .cbm-overlay.cbm-active {
+        opacity: 1 !important;
+        visibility: visible !important;
+        display: flex !important;
+    }
+
+    .cbm-dialog {
+        width: 100%;
+        max-width: 460px;
+        transform: scale(0.92) translateY(12px);
+        transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .cbm-overlay.cbm-active .cbm-dialog {
+        transform: scale(1) translateY(0) !important;
+    }
+
+    .cbm-card {
+        background: #ffffff;
+        border-radius: 22px;
+        box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(226, 232, 240, 0.6);
+        padding: 2.25rem 2rem 1.85rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cbm-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #ef4444, #f87171, #dc2626);
+    }
+
+    .cbm-close-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: transparent;
+        border: none;
+        color: #94a3b8;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: background 0.15s, color 0.15s;
+    }
+
+    .cbm-close-btn:hover {
+        background: #f1f5f9;
+        color: #0f172a;
+    }
+
+    .cbm-icon-wrap {
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        background: #fef2f2;
+        border: 2px solid #fee2e2;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.15rem;
+        margin-bottom: 1.25rem;
+        box-shadow: 0 8px 16px rgba(239, 68, 68, 0.12);
+        animation: cbmPulse 2s infinite ease-in-out;
+    }
+
+    @keyframes cbmPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    .cbm-title {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 0.65rem;
+        letter-spacing: -0.02em;
+    }
+
+    .cbm-meta-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1.15rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .cbm-ref-pill {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 0.825rem;
+        font-weight: 700;
+        color: #334155;
+        background: #ffffff;
+        padding: 0.25rem 0.65rem;
+        border-radius: 6px;
+        border: 1px solid #cbd5e1;
+    }
+
+    .cbm-facility-text {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #475569;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100%;
+    }
+
+    .cbm-message {
+        font-size: 0.925rem;
+        color: #64748b;
+        line-height: 1.55;
+        margin-bottom: 1.25rem;
+    }
+
+    .cbm-deposit-alert {
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        border-radius: 10px;
+        color: #92400e;
+        padding: 0.75rem 1rem;
+        font-size: 0.85rem;
+        line-height: 1.45;
+        margin-bottom: 1.25rem;
+        text-align: left;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .cbm-actions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+    .cbm-btn {
+        padding: 0.65rem 1.35rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.18s ease;
+        border: 1px solid transparent;
+        white-space: nowrap;
+    }
+
+    .cbm-btn-secondary {
+        background: #ffffff;
+        color: #475569;
+        border-color: #cbd5e1;
+    }
+
+    .cbm-btn-secondary:hover {
+        background: #f1f5f9;
+        color: #0f172a;
+        border-color: #94a3b8;
+    }
+
+    .cbm-btn-danger {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: #ffffff;
+        box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
+    }
+
+    .cbm-btn-danger:hover {
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 18px rgba(239, 68, 68, 0.45);
+        color: #ffffff;
+    }
+
+    .cbm-btn-danger:active {
+        transform: translateY(0);
+    }
+
+    .cbm-btn-danger:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none !important;
+    }
+</style>
+
+<script>
+    (function () {
+        var activeCancelForm = null;
+
+        window.openCancelBookingModal = function (targetForm, options) {
+            options = options || {};
+            activeCancelForm = targetForm;
+
+            var modal = document.getElementById('cancelBookingModal');
+            var refEl = document.getElementById('cbmRef');
+            var facWrap = document.getElementById('cbmFacilityWrap');
+            var facEl = document.getElementById('cbmFacility');
+            var depositEl = document.getElementById('cbmDepositAlert');
+            var confirmBtn = document.getElementById('cbmConfirmBtn');
+
+            if (!modal) return;
+
+            // Populate metadata
+            if (refEl) {
+                var ref = options.reference || (targetForm ? targetForm.getAttribute('data-ref') : '') || '';
+                if (ref) {
+                    refEl.textContent = ref.startsWith('#') ? ref : '#' + ref;
+                    refEl.style.display = 'inline-block';
+                } else {
+                    refEl.style.display = 'none';
+                }
+            }
+
+            if (facEl && facWrap) {
+                var facility = options.facility || (targetForm ? targetForm.getAttribute('data-facility') : '') || '';
+                if (facility) {
+                    facEl.textContent = facility;
+                    facWrap.style.display = 'block';
+                } else {
+                    facWrap.style.display = 'none';
+                }
+            }
+
+            // Check non-refundable deposit warning
+            var isPartial = options.isPartial || (targetForm && (targetForm.getAttribute('data-partial') === '1' || targetForm.getAttribute('data-partial') === 'true'));
+            if (depositEl) {
+                if (isPartial) {
+                    depositEl.classList.remove('d-none');
+                } else {
+                    depositEl.classList.add('d-none');
+                }
+            }
+
+            // Reset confirm button
+            if (confirmBtn) {
+                confirmBtn.disabled = false;
+                confirmBtn.innerHTML = '<i class="bi bi-x-circle-fill me-1"></i> Yes, Cancel Booking';
+            }
+
+            // Show modal
+            modal.classList.add('cbm-active');
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closeCancelBookingModal = function () {
+            var modal = document.getElementById('cancelBookingModal');
+            if (modal) {
+                modal.classList.remove('cbm-active');
+                document.body.style.overflow = '';
+            }
+            activeCancelForm = null;
+        };
+
+        window.submitCancelBookingForm = function () {
+            if (!activeCancelForm) return;
+
+            var confirmBtn = document.getElementById('cbmConfirmBtn');
+            if (confirmBtn) {
+                confirmBtn.disabled = true;
+                confirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Cancelling...';
+            }
+
+            // Perform submission
+            var formToSubmit = activeCancelForm;
+            activeCancelForm = null;
+            formToSubmit.submit();
+        };
+
+        // Close on backdrop click
+        document.addEventListener('click', function (e) {
+            var modal = document.getElementById('cancelBookingModal');
+            if (modal && e.target === modal) {
+                window.closeCancelBookingModal();
+            }
+        });
+
+        // Close on ESC key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' || e.key === 'Esc') {
+                var modal = document.getElementById('cancelBookingModal');
+                if (modal && modal.classList.contains('cbm-active')) {
+                    window.closeCancelBookingModal();
+                }
+            }
+        });
+
+        // Global delegated click handler for all [data-cancel-booking] triggers
+        document.addEventListener('click', function (e) {
+            var btn = e.target.closest('[data-cancel-booking]');
+            if (!btn) return;
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            var form = btn.closest('form');
+            if (!form) return;
+
+            var ref = btn.getAttribute('data-ref') || form.getAttribute('data-ref') || '';
+            var facility = btn.getAttribute('data-facility') || form.getAttribute('data-facility') || '';
+            var isPartial = (btn.getAttribute('data-partial') === '1' || form.getAttribute('data-partial') === '1');
+
+            window.openCancelBookingModal(form, {
+                reference: ref,
+                facility: facility,
+                isPartial: isPartial
+            });
+        }, true);
+    })();
+</script>
+<?php /**PATH C:\Users\Steam Deck User\Documents\INTERNAL DEVELOPMENT\resources\views/components/cancel-booking-modal.blade.php ENDPATH**/ ?>
